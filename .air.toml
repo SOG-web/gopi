@@ -1,0 +1,15 @@
+# Air config for hot-reload in development
+root = "."
+
+[build]
+cmd = "go build -o ./tmp/server ./cmd/api"
+bin = "./tmp/server"
+include_ext = ["go", "tpl", "tmpl", "html"]
+exclude_dir = ["tmp", "vendor", "node_modules", "web/.next", "web/node_modules", "logs"]
+delay = 1000
+stop_on_error = true
+send_interrupt = true
+kill_signal = "kill"
+
+[screen]
+clear_on_rebuild = true

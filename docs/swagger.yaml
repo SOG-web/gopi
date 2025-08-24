@@ -1,0 +1,4486 @@
+basePath: /api
+definitions:
+  dto.AdminActionResponse:
+    properties:
+      message:
+        type: string
+      status_code:
+        type: integer
+      success:
+        type: boolean
+    type: object
+  dto.ApologyEmailRequest:
+    properties:
+      users:
+        items:
+          additionalProperties:
+            type: string
+          type: object
+        type: array
+    required:
+    - users
+    type: object
+  dto.AuthErrorResponse:
+    properties:
+      error:
+        type: string
+      error_message:
+        type: string
+      errors: {}
+      status_code:
+        type: integer
+      success:
+        type: boolean
+    type: object
+  dto.BulkEmailRequest:
+    properties:
+      content:
+        type: string
+      subject:
+        type: string
+      user_ids:
+        items:
+          type: string
+        type: array
+    required:
+    - content
+    - subject
+    - user_ids
+    type: object
+  dto.BuyCauseRequest:
+    properties:
+      amount:
+        type: number
+      cause_id:
+        type: string
+    required:
+    - amount
+    - cause_id
+    type: object
+  dto.CampaignLeaderboardEntry:
+    properties:
+      activity:
+        type: string
+      cover_image:
+        type: string
+      distance_covered:
+        type: number
+      duration:
+        type: string
+      full_name:
+        type: string
+      money_raised:
+        type: number
+      user_id:
+        type: string
+      username:
+        type: string
+    type: object
+  dto.CampaignLeaderboardResponse:
+    properties:
+      campaign_slug:
+        type: string
+      leaderboard:
+        items:
+          $ref: '#/definitions/dto.CampaignLeaderboardEntry'
+        type: array
+    type: object
+  dto.CampaignListResponse:
+    properties:
+      campaigns:
+        items:
+          $ref: '#/definitions/dto.CampaignResponse'
+        type: array
+      limit:
+        type: integer
+      page:
+        type: integer
+      total:
+        type: integer
+    type: object
+  dto.CampaignOwnerInfo:
+    properties:
+      full_name:
+        type: string
+      id:
+        type: string
+      username:
+        type: string
+    type: object
+  dto.CampaignResponse:
+    properties:
+      accept_tac:
+        type: boolean
+      activity:
+        type: string
+      condition:
+        type: string
+      date_created:
+        type: string
+      date_updated:
+        type: string
+      description:
+        type: string
+      distance_covered:
+        type: number
+      distance_to_cover:
+        type: number
+      end_duration:
+        type: string
+      goal:
+        type: string
+      id:
+        type: string
+      location:
+        type: string
+      members:
+        items: {}
+        type: array
+      mode:
+        type: string
+      money_raised:
+        type: number
+      name:
+        type: string
+      owner:
+        $ref: '#/definitions/dto.CampaignOwnerInfo'
+      slug:
+        type: string
+      sponsors:
+        items: {}
+        type: array
+      start_duration:
+        type: string
+      target_amount:
+        type: number
+      target_amount_per_km:
+        type: number
+      workout_img:
+        type: string
+    type: object
+  dto.CampaignRunnerListResponse:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      runners:
+        items:
+          $ref: '#/definitions/dto.CampaignRunnerResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  dto.CampaignRunnerResponse:
+    properties:
+      activity:
+        type: string
+      campaign_id:
+        type: string
+      cover_image:
+        type: string
+      date_joined:
+        type: string
+      distance_covered:
+        type: number
+      duration:
+        type: string
+      id:
+        type: string
+      money_raised:
+        type: number
+      runner_id:
+        type: string
+      user_id:
+        type: string
+      username:
+        type: string
+    type: object
+  dto.CauseListResponse:
+    properties:
+      causes:
+        items:
+          $ref: '#/definitions/dto.CauseResponse'
+        type: array
+      limit:
+        type: integer
+      page:
+        type: integer
+      total:
+        type: integer
+    type: object
+  dto.CauseMemberInfo:
+    properties:
+      full_name:
+        type: string
+      id:
+        type: string
+      joined_at:
+        type: string
+      username:
+        type: string
+    type: object
+  dto.CauseOwnerInfo:
+    properties:
+      full_name:
+        type: string
+      id:
+        type: string
+      username:
+        type: string
+    type: object
+  dto.CauseResponse:
+    properties:
+      activity:
+        type: string
+      amount_per_piece:
+        type: number
+      benefit_desc:
+        type: string
+      buyer_user:
+        type: string
+      challenge_id:
+        type: string
+      cost_to_launch:
+        type: string
+      date_created:
+        type: string
+      date_updated:
+        type: string
+      description:
+        type: string
+      distance_covered:
+        type: number
+      duration:
+        type: string
+      fund_amount:
+        type: number
+      fund_cause:
+        type: boolean
+      id:
+        type: string
+      is_commercial:
+        type: boolean
+      location:
+        type: string
+      members:
+        items:
+          $ref: '#/definitions/dto.CauseMemberInfo'
+        type: array
+      name:
+        type: string
+      owner:
+        $ref: '#/definitions/dto.CauseOwnerInfo'
+      problem:
+        type: string
+      product_description:
+        type: string
+      slug:
+        type: string
+      solution:
+        type: string
+      sponsors:
+        items:
+          $ref: '#/definitions/dto.CauseSponsorInfo'
+        type: array
+      unit_price:
+        type: number
+      video_url:
+        type: string
+      who_idea_impact:
+        type: string
+      willing_amount:
+        type: number
+      workout_img:
+        type: string
+    type: object
+  dto.CauseRunnerResponse:
+    properties:
+      activity:
+        type: string
+      cause_id:
+        type: string
+      cover_image:
+        type: string
+      date_joined:
+        type: string
+      distance_covered:
+        type: number
+      distance_to_cover:
+        type: number
+      duration:
+        type: string
+      id:
+        type: string
+      money_raised:
+        type: number
+      runner_id:
+        type: string
+      user_id:
+        type: string
+      username:
+        type: string
+    type: object
+  dto.CauseSponsorInfo:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      sponsored_at:
+        type: string
+      username:
+        type: string
+    type: object
+  dto.ChallengeListResponse:
+    properties:
+      challenges:
+        items:
+          $ref: '#/definitions/dto.ChallengeResponse'
+        type: array
+      limit:
+        type: integer
+      page:
+        type: integer
+      total:
+        type: integer
+    type: object
+  dto.ChallengeMemberInfo:
+    properties:
+      full_name:
+        type: string
+      id:
+        type: string
+      joined_at:
+        type: string
+      username:
+        type: string
+    type: object
+  dto.ChallengeOwnerInfo:
+    properties:
+      full_name:
+        type: string
+      id:
+        type: string
+      username:
+        type: string
+    type: object
+  dto.ChallengeResponse:
+    properties:
+      cause_price:
+        items: {}
+        type: array
+      condition:
+        type: string
+      cover_image:
+        type: string
+      date_created:
+        type: string
+      date_updated:
+        type: string
+      description:
+        type: string
+      distance_to_cover:
+        type: number
+      end_duration:
+        type: string
+      goal:
+        type: string
+      id:
+        type: string
+      location:
+        type: string
+      members:
+        items:
+          $ref: '#/definitions/dto.ChallengeMemberInfo'
+        type: array
+      mode:
+        type: string
+      name:
+        type: string
+      no_of_winner:
+        type: integer
+      owner:
+        $ref: '#/definitions/dto.ChallengeOwnerInfo'
+      slug:
+        type: string
+      sponsors:
+        items:
+          $ref: '#/definitions/dto.ChallengeSponsorInfo'
+        type: array
+      start_duration:
+        type: string
+      target_amount:
+        type: number
+      target_amount_per_km:
+        type: number
+      video_url:
+        type: string
+      winning_price:
+        items: {}
+        type: array
+    type: object
+  dto.ChallengeSponsorInfo:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      sponsored_at:
+        type: string
+      username:
+        type: string
+    type: object
+  dto.ChangePasswordRequest:
+    properties:
+      new_password:
+        minLength: 8
+        type: string
+      old_password:
+        type: string
+    required:
+    - new_password
+    - old_password
+    type: object
+  dto.ChangePasswordResponse:
+    properties:
+      data: {}
+      error_message:
+        type: string
+      message:
+        type: string
+      status_code:
+        type: integer
+      success:
+        type: boolean
+    type: object
+  dto.ChatMessageResponse:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      group_id:
+        type: string
+      id:
+        type: string
+      sender_id:
+        type: string
+      sender_image_url:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  dto.CommentResponse:
+    properties:
+      data: {}
+      message:
+        type: string
+      status_code:
+        type: integer
+      success:
+        type: boolean
+    type: object
+  dto.CreateCampaignRequest:
+    properties:
+      activity:
+        enum:
+        - Walking
+        - Running
+        - Cycling
+        type: string
+      condition:
+        type: string
+      description:
+        type: string
+      distance_to_cover:
+        type: number
+      end_duration:
+        type: string
+      goal:
+        type: string
+      location:
+        type: string
+      mode:
+        enum:
+        - Free
+        - Paid
+        type: string
+      name:
+        maxLength: 100
+        type: string
+      start_duration:
+        type: string
+      target_amount:
+        type: number
+      target_amount_per_km:
+        type: number
+      workout_img:
+        type: string
+    required:
+    - name
+    type: object
+  dto.CreateCampaignRunnerRequest:
+    properties:
+      activity:
+        type: string
+      campaign_id:
+        type: string
+      distance_covered:
+        type: number
+      duration:
+        type: string
+      money_raised:
+        type: number
+      user_id:
+        type: string
+    required:
+    - activity
+    - campaign_id
+    - user_id
+    type: object
+  dto.CreateCauseRequest:
+    properties:
+      activity:
+        enum:
+        - Walking
+        - Running
+        - Cycling
+        type: string
+      amount_per_piece:
+        type: number
+      benefit_desc:
+        type: string
+      buyer_user:
+        type: string
+      challenge_id:
+        type: string
+      cost_to_launch:
+        type: string
+      description:
+        type: string
+      fund_amount:
+        type: number
+      fund_cause:
+        type: boolean
+      is_commercial:
+        type: boolean
+      location:
+        type: string
+      name:
+        maxLength: 100
+        type: string
+      problem:
+        type: string
+      product_description:
+        type: string
+      solution:
+        type: string
+      unit_price:
+        type: number
+      video_url:
+        type: string
+      who_idea_impact:
+        type: string
+      willing_amount:
+        type: number
+      workout_img:
+        type: string
+    required:
+    - challenge_id
+    - name
+    type: object
+  dto.CreateChallengeRequest:
+    properties:
+      condition:
+        type: string
+      cover_image:
+        type: string
+      description:
+        type: string
+      distance_to_cover:
+        type: number
+      end_duration:
+        type: string
+      goal:
+        type: string
+      location:
+        type: string
+      mode:
+        enum:
+        - Free
+        - Paid
+        type: string
+      name:
+        maxLength: 100
+        type: string
+      no_of_winner:
+        type: integer
+      start_duration:
+        type: string
+      target_amount:
+        type: number
+      target_amount_per_km:
+        type: number
+      video_url:
+        type: string
+    required:
+    - name
+    type: object
+  dto.CreateCommentRequest:
+    properties:
+      content:
+        type: string
+      parent_id:
+        type: string
+      target_id:
+        type: string
+      target_type:
+        type: string
+    required:
+    - content
+    - target_id
+    - target_type
+    type: object
+  dto.CreateGroupRequest:
+    properties:
+      image:
+        type: string
+      member_ids:
+        items:
+          type: string
+        type: array
+      name:
+        maxLength: 20
+        type: string
+    required:
+    - name
+    type: object
+  dto.CreatePostRequest:
+    properties:
+      content:
+        type: string
+      cover_image_url:
+        type: string
+      publish:
+        type: boolean
+      title:
+        maxLength: 200
+        type: string
+    required:
+    - content
+    - title
+    type: object
+  dto.CreateSponsorCampaignRequest:
+    properties:
+      amount_per_km:
+        type: number
+      brand_img:
+        type: string
+      campaign_id:
+        type: string
+      distance:
+        type: number
+      sponsor_id:
+        type: string
+      sponsor_ids:
+        items:
+          type: string
+        type: array
+      video_url:
+        type: string
+    required:
+    - amount_per_km
+    - campaign_id
+    - distance
+    - sponsor_id
+    type: object
+  dto.DeleteAccountResponse:
+    properties:
+      detail:
+        type: string
+    type: object
+  dto.ErrorResponse:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      meta: {}
+    type: object
+  dto.FinishActivityRequest:
+    properties:
+      distance_covered:
+        type: number
+      duration:
+        type: string
+      money_raised:
+        type: number
+    required:
+    - distance_covered
+    - duration
+    type: object
+  dto.GetUsersResponse:
+    properties:
+      count:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/dto.UserData'
+        type: array
+      status_code:
+        type: integer
+      success:
+        type: boolean
+    type: object
+  dto.GroupListResponse:
+    properties:
+      groups:
+        items:
+          $ref: '#/definitions/dto.GroupResponse'
+        type: array
+      limit:
+        type: integer
+      page:
+        type: integer
+      total:
+        type: integer
+    type: object
+  dto.GroupMemberResponse:
+    properties:
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  dto.GroupResponse:
+    properties:
+      created_at:
+        type: string
+      creator_id:
+        type: string
+      id:
+        type: string
+      image:
+        type: string
+      member_ids:
+        items:
+          type: string
+        type: array
+      name:
+        type: string
+      slug:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  dto.LeaderboardResponse:
+    properties:
+      runners:
+        items:
+          $ref: '#/definitions/dto.CauseRunnerResponse'
+        type: array
+    type: object
+  dto.ListCommentsResponse:
+    properties:
+      count:
+        type: integer
+      data: {}
+      status_code:
+        type: integer
+      success:
+        type: boolean
+    type: object
+  dto.ListPostsResponse:
+    properties:
+      count:
+        type: integer
+      data: {}
+      status_code:
+        type: integer
+      success:
+        type: boolean
+    type: object
+  dto.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  dto.LoginResponse:
+    properties:
+      error_message:
+        type: string
+      message:
+        type: string
+      status_code:
+        type: integer
+      success:
+        type: boolean
+      token:
+        type: string
+      user_email:
+        type: string
+      user_id:
+        type: string
+    type: object
+  dto.LogoutResponse:
+    properties:
+      message:
+        type: string
+      status_code:
+        type: integer
+      success:
+        type: boolean
+    type: object
+  dto.MessageListResponse:
+    properties:
+      limit:
+        type: integer
+      messages:
+        items:
+          $ref: '#/definitions/dto.ChatMessageResponse'
+        type: array
+      page:
+        type: integer
+      total:
+        type: integer
+    type: object
+  dto.MessageResponse:
+    properties:
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  dto.ParticipateCampaignRequest:
+    properties:
+      activity:
+        type: string
+    required:
+    - activity
+    type: object
+  dto.ParticipateCampaignResponse:
+    properties:
+      message:
+        type: string
+      post_id:
+        type: string
+      runner_id:
+        type: string
+      success:
+        type: boolean
+    type: object
+  dto.PasswordResetConfirmRequest:
+    properties:
+      new_password:
+        minLength: 8
+        type: string
+      token:
+        type: string
+    required:
+    - new_password
+    - token
+    type: object
+  dto.PasswordResetConfirmResponse:
+    properties:
+      data: {}
+      message:
+        type: string
+      status_code:
+        type: integer
+      success:
+        type: boolean
+    type: object
+  dto.PasswordResetRequest:
+    properties:
+      email:
+        type: string
+    required:
+    - email
+    type: object
+  dto.PasswordResetResponse:
+    properties:
+      data: {}
+      message:
+        type: string
+      status_code:
+        type: integer
+      success:
+        type: boolean
+    type: object
+  dto.PostResponse:
+    properties:
+      data: {}
+      message:
+        type: string
+      status_code:
+        type: integer
+      success:
+        type: boolean
+    type: object
+  dto.RecordActivityRequest:
+    properties:
+      activity:
+        type: string
+      cause_id:
+        type: string
+      distance_covered:
+        type: number
+      distance_to_cover:
+        type: number
+      duration:
+        type: string
+    required:
+    - activity
+    - cause_id
+    - distance_covered
+    - distance_to_cover
+    - duration
+    type: object
+  dto.RegistrationRequest:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      height:
+        type: number
+      last_name:
+        type: string
+      password:
+        minLength: 8
+        type: string
+      username:
+        type: string
+      weight:
+        type: number
+    required:
+    - email
+    - first_name
+    - height
+    - last_name
+    - password
+    - username
+    - weight
+    type: object
+  dto.RegistrationResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dto.UserData'
+      date_joined:
+        type: string
+      error_message:
+        type: string
+      is_verified:
+        type: boolean
+      response:
+        type: string
+      status_code:
+        type: integer
+      success:
+        type: boolean
+      token:
+        type: string
+      user_id:
+        type: string
+    type: object
+  dto.ResendOTPResponse:
+    properties:
+      data: {}
+      message:
+        type: string
+      sent:
+        type: boolean
+      status_code:
+        type: integer
+    type: object
+  dto.SendMessageRequest:
+    properties:
+      content:
+        maxLength: 1000
+        type: string
+    required:
+    - content
+    type: object
+  dto.SponsorCampaignListResponse:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      sponsors:
+        items:
+          $ref: '#/definitions/dto.SponsorCampaignResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  dto.SponsorCampaignRequest:
+    properties:
+      amount_per_km:
+        type: number
+      brand_img:
+        type: string
+      distance:
+        type: number
+      video_url:
+        type: string
+    required:
+    - amount_per_km
+    - distance
+    type: object
+  dto.SponsorCampaignResponse:
+    properties:
+      amount_per_km:
+        type: number
+      brand_img:
+        type: string
+      campaign:
+        type: string
+      date_created:
+        type: string
+      distance:
+        type: number
+      id:
+        type: string
+      paystack: {}
+      sponsor:
+        type: string
+      total_amount:
+        type: number
+      video_url:
+        type: string
+    type: object
+  dto.SponsorCauseRequest:
+    properties:
+      amount_per_km:
+        type: number
+      brand_img:
+        type: string
+      cause_id:
+        type: string
+      distance:
+        type: number
+      video_url:
+        type: string
+    required:
+    - amount_per_km
+    - cause_id
+    - distance
+    type: object
+  dto.SponsorChallengeRequest:
+    properties:
+      amount_per_km:
+        type: number
+      brand_img:
+        type: string
+      challenge_id:
+        type: string
+      distance:
+        type: number
+      video_url:
+        type: string
+    required:
+    - amount_per_km
+    - challenge_id
+    - distance
+    type: object
+  dto.UpdateCampaignRequest:
+    properties:
+      accept_tac:
+        type: boolean
+      activity:
+        enum:
+        - Walking
+        - Running
+        - Cycling
+        type: string
+      condition:
+        type: string
+      description:
+        type: string
+      distance_to_cover:
+        type: number
+      end_duration:
+        type: string
+      goal:
+        type: string
+      location:
+        type: string
+      mode:
+        enum:
+        - Free
+        - Paid
+        type: string
+      name:
+        maxLength: 100
+        type: string
+      start_duration:
+        type: string
+      target_amount:
+        type: number
+      target_amount_per_km:
+        type: number
+      workout_img:
+        type: string
+    type: object
+  dto.UpdateCampaignRunnerRequest:
+    properties:
+      activity:
+        type: string
+      cover_image:
+        type: string
+      distance_covered:
+        type: number
+      duration:
+        type: string
+      money_raised:
+        type: number
+    type: object
+  dto.UpdateCommentRequest:
+    properties:
+      content:
+        type: string
+    required:
+    - content
+    type: object
+  dto.UpdateGroupRequest:
+    properties:
+      image:
+        type: string
+      name:
+        maxLength: 20
+        type: string
+    type: object
+  dto.UpdatePostRequest:
+    properties:
+      content:
+        type: string
+      cover_image_url:
+        type: string
+      title:
+        maxLength: 200
+        type: string
+    type: object
+  dto.UpdateSponsorCampaignRequest:
+    properties:
+      amount_per_km:
+        type: number
+      brand_img:
+        type: string
+      distance:
+        type: number
+      video_url:
+        type: string
+    type: object
+  dto.UpdateUserRequest:
+    properties:
+      first_name:
+        type: string
+      height:
+        type: number
+      last_name:
+        type: string
+      username:
+        type: string
+      weight:
+        type: number
+    type: object
+  dto.UserData:
+    properties:
+      created_at:
+        type: string
+      date_joined:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      height:
+        type: number
+      id:
+        type: string
+      is_active:
+        type: boolean
+      is_staff:
+        type: boolean
+      is_superuser:
+        type: boolean
+      is_verified:
+        type: boolean
+      last_login:
+        type: string
+      last_name:
+        type: string
+      profile_image_url:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+      weight:
+        type: number
+    type: object
+  dto.UserProfileResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dto.UserData'
+      status_code:
+        type: integer
+      success:
+        type: boolean
+    type: object
+  dto.UserStatsResponse:
+    properties:
+      data:
+        additionalProperties: true
+        type: object
+      status_code:
+        type: integer
+      success:
+        type: boolean
+    type: object
+  dto.VerifyOTPRequest:
+    properties:
+      email:
+        type: string
+      otp:
+        type: string
+    required:
+    - email
+    - otp
+    type: object
+  dto.VerifyOTPResponse:
+    properties:
+      code:
+        type: integer
+      data: {}
+      error_message:
+        type: string
+      extra:
+        type: string
+      message:
+        type: string
+      status:
+        type: integer
+      success:
+        type: boolean
+    type: object
+  handler.HealthResponse:
+    properties:
+      checks:
+        additionalProperties: true
+        type: object
+      status:
+        type: string
+      time:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Complete user management API with authentication, admin features, and
+    Django equivalent functionality.
+  title: Gopi Backend API
+  version: "1.0"
+paths:
+  /admin/campaign-runners:
+    get:
+      consumes:
+      - application/json
+      description: Get a paginated list of all campaign runners
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Number of items per page
+        in: query
+        name: limit
+        type: integer
+      - description: Filter by campaign ID
+        in: query
+        name: campaign_id
+        type: string
+      - description: Filter by user ID
+        in: query
+        name: user_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Campaign runners retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.CampaignRunnerListResponse'
+        "400":
+          description: Invalid query parameters
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get all campaign runners (Admin)
+      tags:
+      - admin-campaign-runners
+    post:
+      consumes:
+      - application/json
+      description: Create a new campaign runner entry for admin purposes
+      parameters:
+      - description: Campaign runner details
+        in: body
+        name: runner
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateCampaignRunnerRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Campaign runner created successfully
+          schema:
+            $ref: '#/definitions/dto.CampaignRunnerResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Campaign or user not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new campaign runner (Admin)
+      tags:
+      - admin-campaign-runners
+  /admin/campaign-runners/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a campaign runner by its ID
+      parameters:
+      - description: Campaign runner ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Campaign runner deleted successfully
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Campaign runner not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete campaign runner (Admin)
+      tags:
+      - admin-campaign-runners
+    get:
+      consumes:
+      - application/json
+      description: Get a specific campaign runner by its ID
+      parameters:
+      - description: Campaign runner ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Campaign runner retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.CampaignRunnerResponse'
+        "404":
+          description: Campaign runner not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get campaign runner by ID (Admin)
+      tags:
+      - admin-campaign-runners
+    put:
+      consumes:
+      - application/json
+      description: Update a campaign runner by its ID
+      parameters:
+      - description: Campaign runner ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Campaign runner update details
+        in: body
+        name: runner
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateCampaignRunnerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Campaign runner updated successfully
+          schema:
+            $ref: '#/definitions/dto.CampaignRunnerResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Campaign runner not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update campaign runner (Admin)
+      tags:
+      - admin-campaign-runners
+  /admin/sponsor-campaigns:
+    get:
+      consumes:
+      - application/json
+      description: Get a paginated list of all sponsor campaigns
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Number of items per page
+        in: query
+        name: limit
+        type: integer
+      - description: Filter by campaign ID
+        in: query
+        name: campaign_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Sponsor campaigns retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.SponsorCampaignListResponse'
+        "400":
+          description: Invalid query parameters
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get all sponsor campaigns (Admin)
+      tags:
+      - admin-sponsor-campaigns
+    post:
+      consumes:
+      - application/json
+      description: Create a new sponsor campaign entry for admin purposes
+      parameters:
+      - description: Sponsor campaign details
+        in: body
+        name: sponsor
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateSponsorCampaignRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Sponsor campaign created successfully
+          schema:
+            $ref: '#/definitions/dto.SponsorCampaignResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Campaign not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new sponsor campaign (Admin)
+      tags:
+      - admin-sponsor-campaigns
+  /admin/sponsor-campaigns/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a sponsor campaign by its ID
+      parameters:
+      - description: Sponsor campaign ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Sponsor campaign deleted successfully
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Sponsor campaign not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete sponsor campaign (Admin)
+      tags:
+      - admin-sponsor-campaigns
+    get:
+      consumes:
+      - application/json
+      description: Get a specific sponsor campaign by its ID
+      parameters:
+      - description: Sponsor campaign ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Sponsor campaign retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.SponsorCampaignResponse'
+        "404":
+          description: Sponsor campaign not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get sponsor campaign by ID (Admin)
+      tags:
+      - admin-sponsor-campaigns
+    put:
+      consumes:
+      - application/json
+      description: Update a sponsor campaign by its ID
+      parameters:
+      - description: Sponsor campaign ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Sponsor campaign update details
+        in: body
+        name: sponsor
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateSponsorCampaignRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Sponsor campaign updated successfully
+          schema:
+            $ref: '#/definitions/dto.SponsorCampaignResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Sponsor campaign not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update sponsor campaign (Admin)
+      tags:
+      - admin-sponsor-campaigns
+  /api/admin/bulk-email:
+    post:
+      consumes:
+      - application/json
+      description: Send email to multiple users at once (admin only)
+      parameters:
+      - description: Bulk email details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.BulkEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Emails sent successfully
+          schema:
+            $ref: '#/definitions/dto.AdminActionResponse'
+        "400":
+          description: Invalid request format
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "401":
+          description: Unauthorized - invalid or missing token
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "403":
+          description: Forbidden - admin access required
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+      security:
+      - Bearer: []
+      summary: Send Bulk Email
+      tags:
+      - Admin
+  /api/admin/send-apology-emails:
+    post:
+      consumes:
+      - application/json
+      description: Send apology emails to specified users (admin only)
+      parameters:
+      - description: Apology email details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ApologyEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Apology emails sent successfully
+          schema:
+            $ref: '#/definitions/dto.AdminActionResponse'
+        "400":
+          description: Invalid request format
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "401":
+          description: Unauthorized - invalid or missing token
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "403":
+          description: Forbidden - admin access required
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+      security:
+      - Bearer: []
+      summary: Send Apology Emails
+      tags:
+      - Admin
+  /api/admin/stats:
+    get:
+      consumes:
+      - application/json
+      description: Get comprehensive user statistics for admin dashboard
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User statistics retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.UserStatsResponse'
+        "401":
+          description: Unauthorized - invalid or missing token
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "403":
+          description: Forbidden - admin access required
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+      security:
+      - Bearer: []
+      summary: Get User Statistics
+      tags:
+      - Admin
+  /api/admin/users/{id}/activate:
+    post:
+      consumes:
+      - application/json
+      description: Activate a user account (admin only)
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User activated successfully
+          schema:
+            $ref: '#/definitions/dto.AdminActionResponse'
+        "400":
+          description: Invalid user ID
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "401":
+          description: Unauthorized - invalid or missing token
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "403":
+          description: Forbidden - admin access required
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+      security:
+      - Bearer: []
+      summary: Activate User
+      tags:
+      - Admin
+  /api/admin/users/{id}/deactivate:
+    post:
+      consumes:
+      - application/json
+      description: Deactivate a user account (admin only)
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User deactivated successfully
+          schema:
+            $ref: '#/definitions/dto.AdminActionResponse'
+        "400":
+          description: Invalid user ID
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "401":
+          description: Unauthorized - invalid or missing token
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "403":
+          description: Forbidden - admin access required
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+      security:
+      - Bearer: []
+      summary: Deactivate User
+      tags:
+      - Admin
+  /api/admin/users/{id}/force-verify:
+    post:
+      consumes:
+      - application/json
+      description: Force verify a user account without OTP (admin only)
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User verified successfully
+          schema:
+            $ref: '#/definitions/dto.AdminActionResponse'
+        "400":
+          description: Invalid user ID
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "401":
+          description: Unauthorized - invalid or missing token
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "403":
+          description: Forbidden - admin access required
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+      security:
+      - Bearer: []
+      summary: Force Verify User
+      tags:
+      - Admin
+  /api/admin/users/{id}/make-staff:
+    post:
+      consumes:
+      - application/json
+      description: Grant staff privileges to a user (admin only)
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User promoted to staff successfully
+          schema:
+            $ref: '#/definitions/dto.AdminActionResponse'
+        "400":
+          description: Invalid user ID
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "401":
+          description: Unauthorized - invalid or missing token
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "403":
+          description: Forbidden - admin access required
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+      security:
+      - Bearer: []
+      summary: Promote User to Staff
+      tags:
+      - Admin
+  /api/admin/users/{id}/remove-staff:
+    post:
+      consumes:
+      - application/json
+      description: Remove staff privileges from a user (admin only)
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Staff privileges removed successfully
+          schema:
+            $ref: '#/definitions/dto.AdminActionResponse'
+        "400":
+          description: Invalid user ID
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "401":
+          description: Unauthorized - invalid or missing token
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "403":
+          description: Forbidden - admin access required
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+      security:
+      - Bearer: []
+      summary: Remove Staff Privileges
+      tags:
+      - Admin
+  /api/admin/users/search:
+    get:
+      consumes:
+      - application/json
+      description: Search for users by email, username, first name, or last name
+      parameters:
+      - description: Search query (email, username, first name, or last name)
+        in: query
+        name: q
+        required: true
+        type: string
+      - default: 1
+        description: Page number for pagination
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Number of users per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Users found successfully
+          schema:
+            $ref: '#/definitions/dto.GetUsersResponse'
+        "400":
+          description: Search query is required
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "401":
+          description: Unauthorized - invalid or missing token
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "403":
+          description: Forbidden - admin access required
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+      security:
+      - Bearer: []
+      summary: Search Users
+      tags:
+      - Admin
+  /api/auth/change-password:
+    post:
+      consumes:
+      - application/json
+      description: Change user password with current password verification
+      parameters:
+      - description: Password change details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ChangePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Password changed successfully
+          schema:
+            $ref: '#/definitions/dto.ChangePasswordResponse'
+        "400":
+          description: Invalid request format
+          schema:
+            $ref: '#/definitions/dto.ChangePasswordResponse'
+        "401":
+          description: Unauthorized or invalid current password
+          schema:
+            $ref: '#/definitions/dto.ChangePasswordResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/dto.ChangePasswordResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ChangePasswordResponse'
+      security:
+      - Bearer: []
+      summary: Change Password
+      tags:
+      - Authentication
+  /api/auth/delete-account:
+    delete:
+      consumes:
+      - application/json
+      description: Permanently delete the authenticated user's account
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Account deleted successfully
+          schema:
+            $ref: '#/definitions/dto.DeleteAccountResponse'
+        "401":
+          description: Unauthorized - invalid or missing token
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+      security:
+      - Bearer: []
+      summary: Delete User Account
+      tags:
+      - Authentication
+  /api/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and return JWT tokens
+      parameters:
+      - description: Login credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successful with JWT tokens
+          schema:
+            $ref: '#/definitions/dto.LoginResponse'
+        "400":
+          description: Invalid request format
+          schema:
+            $ref: '#/definitions/dto.LoginResponse'
+        "401":
+          description: Invalid credentials
+          schema:
+            $ref: '#/definitions/dto.LoginResponse'
+        "403":
+          description: Account not verified or inactive
+          schema:
+            $ref: '#/definitions/dto.LoginResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.LoginResponse'
+      summary: User Login
+      tags:
+      - Authentication
+  /api/auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Log out user and invalidate JWT tokens
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Logout successful
+          schema:
+            $ref: '#/definitions/dto.LogoutResponse'
+        "401":
+          description: Unauthorized - invalid or missing token
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: User Logout
+      tags:
+      - Authentication
+  /api/auth/password-reset/confirm:
+    post:
+      consumes:
+      - application/json
+      description: Validate a password reset token and set a new password. Token is
+        single-use and expires after TTL.
+      parameters:
+      - description: Token and new password
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PasswordResetConfirmRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Password has been reset successfully
+          schema:
+            $ref: '#/definitions/dto.PasswordResetConfirmResponse'
+        "400":
+          description: Invalid or expired token, or invalid payload
+          schema:
+            $ref: '#/definitions/dto.PasswordResetConfirmResponse'
+      summary: Confirm Password Reset
+      tags:
+      - Authentication
+  /api/auth/password-reset/request:
+    post:
+      consumes:
+      - application/json
+      description: Generate a password reset token and send reset link to email. Always
+        returns 200 to prevent user enumeration.
+      parameters:
+      - description: Email address to reset
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PasswordResetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: If that email exists, a reset link has been sent.
+          schema:
+            $ref: '#/definitions/dto.PasswordResetResponse'
+        "400":
+          description: Invalid request payload
+          schema:
+            $ref: '#/definitions/dto.PasswordResetResponse'
+      summary: Request Password Reset
+      tags:
+      - Authentication
+  /api/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user account with email verification
+      parameters:
+      - description: Registration details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RegistrationRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User registered successfully, OTP sent to email
+          schema:
+            $ref: '#/definitions/dto.RegistrationResponse'
+        "400":
+          description: Invalid input or validation error
+          schema:
+            $ref: '#/definitions/dto.RegistrationResponse'
+        "409":
+          description: User already exists
+          schema:
+            $ref: '#/definitions/dto.RegistrationResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.RegistrationResponse'
+      summary: User Registration
+      tags:
+      - Authentication
+  /api/auth/resend-otp/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Resend verification OTP to user's email
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OTP sent successfully
+          schema:
+            $ref: '#/definitions/dto.ResendOTPResponse'
+        "400":
+          description: Invalid user ID
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "429":
+          description: Too many requests - rate limited
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+      summary: Resend OTP
+      tags:
+      - Authentication
+  /api/auth/verify-otp:
+    post:
+      consumes:
+      - application/json
+      description: Verify email OTP to activate user account
+      parameters:
+      - description: OTP verification details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.VerifyOTPRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OTP verified successfully, account activated
+          schema:
+            $ref: '#/definitions/dto.VerifyOTPResponse'
+        "400":
+          description: Invalid request format
+          schema:
+            $ref: '#/definitions/dto.VerifyOTPResponse'
+        "401":
+          description: Invalid or expired OTP
+          schema:
+            $ref: '#/definitions/dto.VerifyOTPResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/dto.VerifyOTPResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.VerifyOTPResponse'
+      summary: Verify OTP
+      tags:
+      - Authentication
+  /api/user/profile/image:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload or update the authenticated user's profile image
+      parameters:
+      - description: Profile image file (png, jpg, jpeg, webp, gif)
+        in: formData
+        name: image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Profile image updated
+          schema:
+            $ref: '#/definitions/dto.UserProfileResponse'
+        "400":
+          description: Invalid request or file
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+      security:
+      - Bearer: []
+      summary: Upload/Update Profile Image
+      tags:
+      - Users
+  /api/users:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all users in the system (admin access required)
+      parameters:
+      - default: 1
+        description: Page number for pagination
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Number of users per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Users retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.GetUsersResponse'
+        "401":
+          description: Unauthorized - invalid or missing token
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "403":
+          description: Forbidden - admin access required
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+      security:
+      - Bearer: []
+      summary: Get All Users
+      tags:
+      - Users
+  /api/users/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a specific user by their ID (admin access required)
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.UserProfileResponse'
+        "400":
+          description: Invalid user ID
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "401":
+          description: Unauthorized - invalid or missing token
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "403":
+          description: Forbidden - admin access required
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+      security:
+      - Bearer: []
+      summary: Get User by ID
+      tags:
+      - Users
+  /api/users/profile:
+    get:
+      consumes:
+      - application/json
+      description: Get the profile information of the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User profile retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.UserProfileResponse'
+        "401":
+          description: Unauthorized - invalid or missing token
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+      security:
+      - Bearer: []
+      summary: Get User Profile
+      tags:
+      - Users
+    put:
+      consumes:
+      - application/json
+      description: Update the authenticated user's profile information
+      parameters:
+      - description: Profile update details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Profile updated successfully
+          schema:
+            $ref: '#/definitions/dto.UserProfileResponse'
+        "400":
+          description: Invalid request format
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "401":
+          description: Unauthorized - invalid or missing token
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+      security:
+      - Bearer: []
+      summary: Update User Profile
+      tags:
+      - Users
+  /api/users/staff:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all staff users (admin access required)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Staff users retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.GetUsersResponse'
+        "401":
+          description: Unauthorized - invalid or missing token
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "403":
+          description: Forbidden - admin access required
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+      security:
+      - Bearer: []
+      summary: Get Staff Users
+      tags:
+      - Users
+  /api/users/unverified:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all unverified users (admin access required)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Unverified users retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.GetUsersResponse'
+        "401":
+          description: Unauthorized - invalid or missing token
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "403":
+          description: Forbidden - admin access required
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+      security:
+      - Bearer: []
+      summary: Get Unverified Users
+      tags:
+      - Users
+  /api/users/verified:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all verified users (admin access required)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Verified users retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.GetUsersResponse'
+        "401":
+          description: Unauthorized - invalid or missing token
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "403":
+          description: Forbidden - admin access required
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.AuthErrorResponse'
+      security:
+      - Bearer: []
+      summary: Get Verified Users
+      tags:
+      - Users
+  /campaigns:
+    get:
+      consumes:
+      - application/json
+      description: Get a paginated list of all campaigns
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Number of items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Campaigns retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.CampaignListResponse'
+        "400":
+          description: Invalid query parameters
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: List all campaigns
+      tags:
+      - campaigns
+    post:
+      consumes:
+      - application/json
+      description: Create a new campaign with the provided details
+      parameters:
+      - description: Campaign details
+        in: body
+        name: campaign
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateCampaignRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Campaign created successfully
+          schema:
+            $ref: '#/definitions/dto.CampaignResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized - not a member or sponsor
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Campaign not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new campaign
+      tags:
+      - campaigns
+  /campaigns/{slug}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a campaign by its slug (only owner can delete)
+      parameters:
+      - description: Campaign slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Campaign deleted successfully
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "403":
+          description: Forbidden - not campaign owner
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Campaign not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete campaign
+      tags:
+      - campaigns
+    get:
+      consumes:
+      - application/json
+      description: Get a specific campaign by its slug
+      parameters:
+      - description: Campaign slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Campaign retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.CampaignResponse'
+        "404":
+          description: Campaign not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Get campaign by slug
+      tags:
+      - campaigns
+    put:
+      consumes:
+      - application/json
+      description: Update a campaign by its slug (only owner can update)
+      parameters:
+      - description: Campaign slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      - description: Campaign update details
+        in: body
+        name: campaign
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateCampaignRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Campaign updated successfully
+          schema:
+            $ref: '#/definitions/dto.CampaignResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "403":
+          description: Forbidden - not campaign owner
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Campaign not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update campaign
+      tags:
+      - campaigns
+  /campaigns/{slug}/finish_campaign/{runner_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get details for finishing a campaign run (simplified without post
+        system)
+      parameters:
+      - description: Campaign slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      - description: Campaign runner ID
+        in: path
+        name: runner_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Campaign runner details retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.CampaignRunnerResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Campaign or runner not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get campaign finish details
+      tags:
+      - campaigns
+    put:
+      consumes:
+      - application/json
+      description: Complete a campaign run by updating runner details
+      parameters:
+      - description: Campaign slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      - description: Campaign runner ID
+        in: path
+        name: runner_id
+        required: true
+        type: string
+      - description: Activity completion details
+        in: body
+        name: details
+        required: true
+        schema:
+          $ref: '#/definitions/dto.FinishActivityRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Campaign run finished successfully
+          schema:
+            $ref: '#/definitions/dto.CampaignRunnerResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Campaign or runner not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Finish a campaign run
+      tags:
+      - campaigns
+  /campaigns/{slug}/join:
+    put:
+      consumes:
+      - application/json
+      description: Add the authenticated user as a member of the campaign
+      parameters:
+      - description: Campaign slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully joined campaign
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "400":
+          description: Already a member
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Campaign not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Join a campaign
+      tags:
+      - campaigns
+  /campaigns/{slug}/leaderboard:
+    get:
+      consumes:
+      - application/json
+      description: Get leaderboard of campaign participants ordered by distance covered
+      parameters:
+      - description: Campaign slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Leaderboard retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.CampaignLeaderboardResponse'
+        "404":
+          description: Campaign not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Get campaign leaderboard
+      tags:
+      - campaigns
+  /campaigns/{slug}/participate:
+    post:
+      consumes:
+      - application/json
+      description: Start participating in a campaign by creating a runner entry
+      parameters:
+      - description: Campaign slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      - description: Participation details
+        in: body
+        name: participation
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ParticipateCampaignRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully started participation
+          schema:
+            $ref: '#/definitions/dto.ParticipateCampaignResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Campaign not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Participate in a campaign
+      tags:
+      - campaigns
+  /campaigns/{slug}/sponsor:
+    post:
+      consumes:
+      - application/json
+      description: Add sponsorship to a campaign
+      parameters:
+      - description: Campaign slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      - description: Sponsorship details
+        in: body
+        name: sponsorship
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SponsorCampaignRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully sponsored campaign
+          schema:
+            $ref: '#/definitions/dto.SponsorCampaignResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Campaign not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Sponsor a campaign
+      tags:
+      - campaigns
+  /campaigns/by_others:
+    get:
+      consumes:
+      - application/json
+      description: Get all campaigns created by users other than the authenticated
+        user
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Number of items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Other users' campaigns retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.CampaignListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get campaigns by other users
+      tags:
+      - campaigns
+  /campaigns/by_user:
+    get:
+      consumes:
+      - application/json
+      description: Get all campaigns created by the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User campaigns retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.CampaignListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get campaigns by current user
+      tags:
+      - campaigns
+  /causes:
+    post:
+      consumes:
+      - application/json
+      description: Create a new cause within a challenge
+      parameters:
+      - description: Cause details
+        in: body
+        name: cause
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateCauseRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Cause created successfully
+          schema:
+            $ref: '#/definitions/dto.CauseResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new cause
+      tags:
+      - causes
+  /causes/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a specific cause by its ID
+      parameters:
+      - description: Cause ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cause retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.CauseResponse'
+        "404":
+          description: Cause not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Get cause by ID
+      tags:
+      - causes
+  /causes/{id}/join:
+    post:
+      consumes:
+      - application/json
+      description: Join a cause as a member
+      parameters:
+      - description: Cause ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully joined cause
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Cause not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Join a cause
+      tags:
+      - causes
+  /causes/activity:
+    post:
+      consumes:
+      - application/json
+      description: Record activity for a cause (distance covered, etc.)
+      parameters:
+      - description: Activity details
+        in: body
+        name: activity
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RecordActivityRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Activity recorded successfully
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Record cause activity
+      tags:
+      - causes
+  /causes/buy:
+    post:
+      consumes:
+      - application/json
+      description: Purchase a cause with specified amount
+      parameters:
+      - description: Purchase details
+        in: body
+        name: purchase
+        required: true
+        schema:
+          $ref: '#/definitions/dto.BuyCauseRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cause purchased successfully
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Buy a cause
+      tags:
+      - purchase
+  /causes/sponsor:
+    post:
+      consumes:
+      - application/json
+      description: Sponsor a cause with amount per kilometer
+      parameters:
+      - description: Sponsorship details
+        in: body
+        name: sponsorship
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SponsorCauseRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cause sponsored successfully
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Sponsor a cause
+      tags:
+      - sponsorship
+  /challenges:
+    get:
+      consumes:
+      - application/json
+      description: Get a paginated list of all challenges
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Number of items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Challenges retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.ChallengeListResponse'
+        "400":
+          description: Invalid query parameters
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: List all challenges
+      tags:
+      - challenges
+    post:
+      consumes:
+      - application/json
+      description: Create a new challenge with the provided details
+      parameters:
+      - description: Challenge details
+        in: body
+        name: challenge
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateChallengeRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Challenge created successfully
+          schema:
+            $ref: '#/definitions/dto.ChallengeResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new challenge
+      tags:
+      - challenges
+  /challenges/{challenge_id}/causes:
+    get:
+      consumes:
+      - application/json
+      description: Get all causes for a specific challenge
+      parameters:
+      - description: Challenge ID
+        in: path
+        name: challenge_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Causes retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.CauseListResponse'
+        "404":
+          description: Challenge not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Get causes by challenge
+      tags:
+      - causes
+  /challenges/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a specific challenge by its ID
+      parameters:
+      - description: Challenge ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Challenge retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.ChallengeResponse'
+        "404":
+          description: Challenge not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Get challenge by ID
+      tags:
+      - challenges
+  /challenges/{id}/join:
+    post:
+      consumes:
+      - application/json
+      description: Join a challenge as a member
+      parameters:
+      - description: Challenge ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully joined challenge
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Challenge not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Join a challenge
+      tags:
+      - challenges
+  /challenges/leaderboard:
+    get:
+      consumes:
+      - application/json
+      description: Get the leaderboard of top performers
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Leaderboard retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.LeaderboardResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Get leaderboard
+      tags:
+      - leaderboard
+  /challenges/slug/{slug}:
+    get:
+      consumes:
+      - application/json
+      description: Get a specific challenge by its slug
+      parameters:
+      - description: Challenge slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Challenge retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.ChallengeResponse'
+        "404":
+          description: Challenge not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Get challenge by slug
+      tags:
+      - challenges
+  /challenges/sponsor:
+    post:
+      consumes:
+      - application/json
+      description: Sponsor a challenge with amount per kilometer
+      parameters:
+      - description: Sponsorship details
+        in: body
+        name: sponsorship
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SponsorChallengeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Challenge sponsored successfully
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Sponsor a challenge
+      tags:
+      - sponsorship
+  /chat/admin/groups/search:
+    get:
+      description: Case-insensitive search over group names with pagination (staff
+        only)
+      parameters:
+      - description: Search query
+        in: query
+        name: q
+        required: true
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Groups retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.GroupListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "403":
+          description: Forbidden - staff only
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: 'Admin: search chat groups by name'
+      tags:
+      - chat
+      - admin
+  /chat/groups:
+    get:
+      consumes:
+      - application/json
+      description: Get a paginated list of all groups where the user is a member or
+        creator
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Number of items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Groups retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.GroupListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List all groups for current user
+      tags:
+      - chat
+    post:
+      consumes:
+      - application/json
+      description: Create a new chat group with the provided details
+      parameters:
+      - description: Group details
+        in: body
+        name: group
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateGroupRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Group created successfully
+          schema:
+            $ref: '#/definitions/dto.GroupResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new chat group
+      tags:
+      - chat
+  /chat/groups/{slug}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a group by its slug (only creator can delete)
+      parameters:
+      - description: Group slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Group deleted successfully
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "403":
+          description: Forbidden - not group creator
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Group not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete group
+      tags:
+      - chat
+    get:
+      consumes:
+      - application/json
+      description: Get a specific group by its slug
+      parameters:
+      - description: Group slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Group retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.GroupResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "403":
+          description: Forbidden - not a member
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Group not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get group by slug
+      tags:
+      - chat
+    put:
+      consumes:
+      - application/json
+      description: Update a group by its slug (only creator can update)
+      parameters:
+      - description: Group slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      - description: Group update details
+        in: body
+        name: group
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateGroupRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Group updated successfully
+          schema:
+            $ref: '#/definitions/dto.GroupResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "403":
+          description: Forbidden - not group creator
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Group not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update group
+      tags:
+      - chat
+  /chat/groups/{slug}/join:
+    post:
+      consumes:
+      - application/json
+      description: Add the authenticated user as a member of the group
+      parameters:
+      - description: Group slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully joined group
+          schema:
+            $ref: '#/definitions/dto.GroupMemberResponse'
+        "400":
+          description: Already a member
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Group not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Join a chat group
+      tags:
+      - chat
+  /chat/groups/{slug}/leave:
+    post:
+      consumes:
+      - application/json
+      description: Remove the authenticated user from the group
+      parameters:
+      - description: Group slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully left group
+          schema:
+            $ref: '#/definitions/dto.GroupMemberResponse'
+        "400":
+          description: Not a member
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Group not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Leave a chat group
+      tags:
+      - chat
+  /chat/groups/{slug}/messages:
+    get:
+      consumes:
+      - application/json
+      description: Get a paginated list of messages from a specific group
+      parameters:
+      - description: Group slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Number of items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Messages retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.MessageListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "403":
+          description: Forbidden - not a member
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Group not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get messages from a group
+      tags:
+      - chat
+    post:
+      consumes:
+      - application/json
+      description: Send a message to a specific group (only members can send)
+      parameters:
+      - description: Group slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      - description: Message details
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SendMessageRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Message sent successfully
+          schema:
+            $ref: '#/definitions/dto.ChatMessageResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "403":
+          description: Forbidden - not a member
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Group not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Send a message to a group
+      tags:
+      - chat
+  /comments:
+    post:
+      consumes:
+      - application/json
+      description: Create a comment on any target (auth required)
+      parameters:
+      - description: Comment payload
+        in: body
+        name: comment
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateCommentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.CommentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.CommentResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.CommentResponse'
+      security:
+      - Bearer: []
+      summary: Create a comment
+      tags:
+      - comments
+  /comments/{id}:
+    delete:
+      description: Delete a comment (author only)
+      parameters:
+      - description: Comment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.CommentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.CommentResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.CommentResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.CommentResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.CommentResponse'
+      security:
+      - Bearer: []
+      summary: Delete a comment
+      tags:
+      - comments
+    put:
+      consumes:
+      - application/json
+      description: Update a comment (author only)
+      parameters:
+      - description: Comment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Comment update payload
+        in: body
+        name: comment
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateCommentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.CommentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.CommentResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.CommentResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.CommentResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.CommentResponse'
+      security:
+      - Bearer: []
+      summary: Update a comment
+      tags:
+      - comments
+  /comments/{targetType}/{targetID}:
+    get:
+      description: Get comments for a target type and ID
+      parameters:
+      - description: Target type
+        in: path
+        name: targetType
+        required: true
+        type: string
+      - description: Target ID
+        in: path
+        name: targetID
+        required: true
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 50
+        description: Number of items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ListCommentsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.CommentResponse'
+      summary: List comments for a target
+      tags:
+      - comments
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: Health check endpoint to verify service status including Redis
+        connection
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Service is healthy
+          schema:
+            $ref: '#/definitions/handler.HealthResponse'
+        "503":
+          description: Service is unhealthy
+          schema:
+            $ref: '#/definitions/handler.HealthResponse'
+      summary: Health Check
+      tags:
+      - System
+  /posts:
+    get:
+      description: Get a paginated list of published posts
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Number of items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ListPostsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+      summary: List published posts
+      tags:
+      - posts
+  /posts/{id}:
+    delete:
+      description: Delete a post. Only the author or a superuser may delete.
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+      security:
+      - Bearer: []
+      summary: Delete a post
+      tags:
+      - posts
+  /posts/{id}/cover:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload or update the cover image for a post. Only the author, staff,
+        or superuser may upload.
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Cover image file (png, jpg, jpeg, webp, gif)
+        in: formData
+        name: image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+      security:
+      - Bearer: []
+      summary: Upload post cover image
+      tags:
+      - posts
+  /posts/{slug}:
+    get:
+      description: Retrieve a single published post by slug
+      parameters:
+      - description: Post slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+      summary: Get post by slug
+      tags:
+      - posts
+  /posts/admin:
+    post:
+      consumes:
+      - application/json
+      description: Create a new post (staff only)
+      parameters:
+      - description: Post payload
+        in: body
+        name: post
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreatePostRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+      security:
+      - Bearer: []
+      summary: Create a post
+      tags:
+      - posts
+  /posts/admin/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update a post (staff only)
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Post update payload
+        in: body
+        name: post
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdatePostRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+      security:
+      - Bearer: []
+      summary: Update a post
+      tags:
+      - posts
+  /posts/admin/{id}/publish:
+    post:
+      description: Publish a post (staff only)
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+      security:
+      - Bearer: []
+      summary: Publish a post
+      tags:
+      - posts
+  /posts/admin/{id}/unpublish:
+    post:
+      description: Unpublish a post (staff only)
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.PostResponse'
+      security:
+      - Bearer: []
+      summary: Unpublish a post
+      tags:
+      - posts
+  /ws/chat/groups/{groupSlug}:
+    get:
+      description: 'Upgrade the HTTP connection to a WebSocket for realtime chat within
+        a group. Requires JWT auth. Alias route: /ws/chat/group/{groupSlug}.'
+      parameters:
+      - description: Group slug
+        in: path
+        name: groupSlug
+        required: true
+        type: string
+      responses:
+        "101":
+          description: Switching Protocols
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "404":
+          description: Group not found
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: WebSocket chat connection
+      tags:
+      - chat
+schemes:
+- http
+- https
+securityDefinitions:
+  Bearer:
+    description: 'Enter JWT Bearer token in the format: Bearer {token}'
+    in: header
+    name: Authorization
+    type: apiKey
+  Session:
+    in: cookie
+    name: hor_session
+    type: apiKey
+swagger: "2.0"

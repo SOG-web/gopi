@@ -1,0 +1,46 @@
+# Binaries & build artifacts
+/bin/
+/tmp/
+/*.exe
+/*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go coverage
+coverage.out
+*.coverprofile
+
+# Logs (keep dir clean in git)
+logs/*
+!logs/.gitkeep
+
+# Local env files
+.env
+.env.*
+!.env.example
+
+# SQLite and other local DB files
+*.db
+*.sqlite
+*.sqlite3
+
+# Uploads (from UploadBaseDir default ./uploads)
+uploads/**
+!uploads/.gitkeep
+
+# OS/Editor junk
+.DS_Store
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+
+# Redis dump (if created locally)
+dump.rdb
+
+# Local oddities
+127.0.0.1:3306
