@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"gopi.com/api/http/dto"
@@ -103,7 +104,7 @@ func (h *CampaignAdminHandler) GetCampaignRunners(c *gin.Context) {
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
 	campaignID := c.Query("campaign_id")
 	userID := c.Query("user_id")
-	
+
 	if page < 1 {
 		page = 1
 	}
@@ -141,7 +142,7 @@ func (h *CampaignAdminHandler) GetCampaignRunners(c *gin.Context) {
 			respondError(c, apperr.E("GetCampaignRunners", apperr.Internal, campErr, "Failed to fetch campaigns"))
 			return
 		}
-		
+
 		// Get runners from all recent campaigns
 		for _, campaign := range campaigns {
 			campaignRunners, _ := h.campaignService.GetLeaderboard(campaign.Slug)
@@ -188,13 +189,18 @@ func (h *CampaignAdminHandler) GetCampaignRunnerByID(c *gin.Context) {
 	// Implement GetRunnerByID in service
 	runner, err := h.campaignService.GetRunnerByID(id)
 	if err != nil {
-		respondError(c, apperr.E("GetCampaignRunnerByID", apperr.NotFound, err, "Campaign runner not found"))
+		// Check if it's a not found error
+		if strings.Contains(err.Error(), "not found") || strings.Contains(err.Error(), "no rows") {
+			respondError(c, apperr.E("GetCampaignRunnerByID", apperr.NotFound, err, "Campaign runner not found"))
+		} else {
+			respondError(c, apperr.E("GetCampaignRunnerByID", apperr.Internal, err, "Failed to get campaign runner"))
+		}
 		return
 	}
 
 	user, _ := h.userService.GetUserByID(runner.OwnerID)
 	response := h.campaignRunnerToResponse(runner, user)
-	
+
 	c.JSON(http.StatusOK, response)
 }
 
@@ -274,8 +280,15 @@ func (h *CampaignAdminHandler) UpdateCampaignRunner(c *gin.Context) {
 func (h *CampaignAdminHandler) DeleteCampaignRunner(c *gin.Context) {
 	id := c.Param("id")
 
-	// Implement delete logic
-	err := h.campaignService.DeleteRunner(id)
+	// Check if runner exists first
+	_, err := h.campaignService.GetRunnerByID(id)
+	if err != nil {
+		respondError(c, apperr.E("DeleteCampaignRunner", apperr.NotFound, err, "Campaign runner not found"))
+		return
+	}
+
+	// Delete the runner
+	err = h.campaignService.DeleteRunner(id)
 	if err != nil {
 		respondError(c, apperr.E("DeleteCampaignRunner", apperr.Internal, err, "Failed to delete campaign runner"))
 		return
@@ -378,7 +391,7 @@ func (h *CampaignAdminHandler) GetSponsorCampaigns(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
 	campaignID := c.Query("campaign_id")
-	
+
 	if page < 1 {
 		page = 1
 	}
@@ -399,7 +412,7 @@ func (h *CampaignAdminHandler) GetSponsorCampaigns(c *gin.Context) {
 			respondError(c, apperr.E("GetSponsorCampaigns", apperr.Internal, campErr, "Failed to fetch campaigns"))
 			return
 		}
-		
+
 		// Get sponsors from all recent campaigns
 		for _, campaign := range campaigns {
 			campaignSponsors, _ := h.campaignService.GetSponsorCampaignsByCampaign(campaign.ID)
@@ -444,18 +457,23 @@ func (h *CampaignAdminHandler) GetSponsorCampaignByID(c *gin.Context) {
 
 	sponsor, err := h.campaignService.GetSponsorCampaignByID(id)
 	if err != nil {
-		respondError(c, apperr.E("GetSponsorCampaignByID", apperr.NotFound, err, "Sponsor campaign not found"))
+		// Check if it's a not found error
+		if strings.Contains(err.Error(), "not found") || strings.Contains(err.Error(), "no rows") {
+			respondError(c, apperr.E("GetSponsorCampaignByID", apperr.NotFound, err, "Sponsor campaign not found"))
+		} else {
+			respondError(c, apperr.E("GetSponsorCampaignByID", apperr.Internal, err, "Failed to get sponsor campaign"))
+		}
 		return
 	}
 
 	response := h.sponsorCampaignToResponse(sponsor)
-	
+
 	// Get campaign and sponsor names
 	campaign, _ := h.campaignService.GetCampaignByID(sponsor.CampaignID)
 	if campaign != nil {
 		response.Campaign = campaign.Name
 	}
-	
+
 	if len(sponsor.Sponsors) > 0 {
 		if id, ok := sponsor.Sponsors[0].(string); ok {
 			response.Sponsor = id // Use first sponsor ID
@@ -542,7 +560,15 @@ func (h *CampaignAdminHandler) UpdateSponsorCampaign(c *gin.Context) {
 func (h *CampaignAdminHandler) DeleteSponsorCampaign(c *gin.Context) {
 	id := c.Param("id")
 
-	err := h.campaignService.DeleteSponsorCampaign(id)
+	// Check if sponsor campaign exists first
+	_, err := h.campaignService.GetSponsorCampaignByID(id)
+	if err != nil {
+		respondError(c, apperr.E("DeleteSponsorCampaign", apperr.NotFound, err, "Sponsor campaign not found"))
+		return
+	}
+
+	// Delete the sponsor campaign
+	err = h.campaignService.DeleteSponsorCampaign(id)
 	if err != nil {
 		respondError(c, apperr.E("DeleteSponsorCampaign", apperr.Internal, err, "Failed to delete sponsor campaign"))
 		return
@@ -578,7 +604,7 @@ func (h *CampaignAdminHandler) sponsorCampaignToResponse(sponsor *campaignModel.
 		ID:          sponsor.ID,
 		Distance:    sponsor.Distance,
 		Campaign:    sponsor.CampaignID, // Will be overridden with campaign name in calling function
-		Sponsor:     "", // Will be set in calling function
+		Sponsor:     "",                 // Will be set in calling function
 		AmountPerKm: sponsor.AmountPerKm,
 		TotalAmount: sponsor.TotalAmount,
 		BrandImg:    sponsor.BrandImg,

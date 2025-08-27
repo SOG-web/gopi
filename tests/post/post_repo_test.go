@@ -1,6 +1,7 @@
 package post_test
 
 import (
+	"errors"
 	"regexp"
 	"testing"
 	"time"
@@ -895,4 +896,363 @@ func TestGormCommentRepository_ListByAuthor(t *testing.T) {
 			}
 		})
 	}
+}
+
+// MISSING TESTS FOR GORM COMMENT REPOSITORY
+// These tests cover the 3 missing methods that are critical for comment functionality
+
+func TestGormCommentRepository_Update(t *testing.T) {
+	db := setupTestDB(t)
+	repo := repo.NewGormCommentRepository(db)
+
+	// Create a test comment first
+	originalComment := &postModel.Comment{
+		Base: model.Base{
+			ID:        "test-comment-id",
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		},
+		AuthorID:   "author123",
+		Content:    "Original comment content",
+		TargetType: "post",
+		TargetID:   "post123",
+		ParentID:   nil,
+		IsDeleted:  false,
+	}
+
+	err := repo.Create(originalComment)
+	assert.NoError(t, err)
+
+	tests := []struct {
+		name        string
+		commentID   string
+		updateData  *postModel.Comment
+		expectedErr error
+	}{
+		{
+			name:      "successful comment update",
+			commentID: "test-comment-id",
+			updateData: &postModel.Comment{
+				Base: model.Base{
+					ID:        "test-comment-id",
+					CreatedAt: time.Now(),
+					UpdatedAt: time.Now(),
+				},
+				AuthorID:   "author123",
+				Content:    "Updated comment content",
+				TargetType: "post",
+				TargetID:   "post123",
+				ParentID:   nil,
+				IsDeleted:  false,
+			},
+			expectedErr: nil,
+		},
+		{
+			name:      "partial update - only content",
+			commentID: "test-comment-id",
+			updateData: &postModel.Comment{
+				Base: model.Base{
+					ID:        "test-comment-id",
+					CreatedAt: time.Now(),
+					UpdatedAt: time.Now(),
+				},
+				AuthorID:   "author123",
+				Content:    "Partially updated content",
+				TargetType: "post",
+				TargetID:   "post123",
+				ParentID:   nil,
+				IsDeleted:  false,
+			},
+			expectedErr: nil,
+		},
+		{
+			name:      "update with reply structure",
+			commentID: "test-comment-id",
+			updateData: &postModel.Comment{
+				Base: model.Base{
+					ID:        "test-comment-id",
+					CreatedAt: time.Now(),
+					UpdatedAt: time.Now(),
+				},
+				AuthorID:   "author123",
+				Content:    "Reply comment content",
+				TargetType: "post",
+				TargetID:   "post123",
+				ParentID:   stringPtr("parent-comment-id"),
+				IsDeleted:  false,
+			},
+			expectedErr: nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := repo.Update(tt.updateData)
+
+			if tt.expectedErr != nil {
+				assert.Error(t, err)
+				assert.Contains(t, err.Error(), tt.expectedErr.Error())
+			} else {
+				assert.NoError(t, err)
+
+				// Verify the comment was updated in the database
+				var dbComment postGorm.Comment
+				result := db.First(&dbComment, "id = ?", tt.commentID)
+				assert.NoError(t, result.Error)
+				assert.Equal(t, tt.updateData.Content, dbComment.Content)
+				assert.Equal(t, tt.updateData.AuthorID, dbComment.AuthorID)
+				assert.Equal(t, tt.updateData.TargetType, dbComment.TargetType)
+				assert.Equal(t, tt.updateData.TargetID, dbComment.TargetID)
+				assert.Equal(t, tt.updateData.IsDeleted, dbComment.IsDeleted)
+
+				// Verify ParentID handling
+				if tt.updateData.ParentID != nil {
+					assert.NotNil(t, dbComment.ParentID)
+					assert.Equal(t, *tt.updateData.ParentID, *dbComment.ParentID)
+				} else {
+					assert.Nil(t, dbComment.ParentID)
+				}
+
+				// Verify updated_at was updated
+				assert.True(t, dbComment.UpdatedAt.After(originalComment.UpdatedAt))
+			}
+		})
+	}
+}
+
+func TestGormCommentRepository_Delete(t *testing.T) {
+	db := setupTestDB(t)
+	repo := repo.NewGormCommentRepository(db)
+
+	// Create a test comment first
+	testComment := &postModel.Comment{
+		Base: model.Base{
+			ID:        "test-comment-id",
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		},
+		AuthorID:   "author123",
+		Content:    "Comment to be deleted",
+		TargetType: "post",
+		TargetID:   "post123",
+		ParentID:   nil,
+		IsDeleted:  false,
+	}
+
+	err := repo.Create(testComment)
+	assert.NoError(t, err)
+
+	tests := []struct {
+		name        string
+		commentID   string
+		expectedErr error
+	}{
+		{
+			name:        "successful comment deletion",
+			commentID:   "test-comment-id",
+			expectedErr: nil,
+		},
+		{
+			name:        "delete nonexistent comment",
+			commentID:   "nonexistent-id",
+			expectedErr: nil, // GORM Delete doesn't return error for non-existent records
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := repo.Delete(tt.commentID)
+
+			if tt.expectedErr != nil {
+				assert.Error(t, err)
+				assert.Contains(t, err.Error(), tt.expectedErr.Error())
+			} else {
+				assert.NoError(t, err)
+
+				// Verify the comment was deleted from the database
+				var dbComment postGorm.Comment
+				result := db.First(&dbComment, "id = ?", tt.commentID)
+				assert.Error(t, result.Error)
+				assert.True(t, errors.Is(result.Error, gormLib.ErrRecordNotFound))
+			}
+		})
+	}
+}
+
+func TestGormCommentRepository_ListReplies(t *testing.T) {
+	db := setupTestDB(t)
+	repo := repo.NewGormCommentRepository(db)
+
+	// Create test data
+	parentCommentID := "parent-comment-id"
+	replyCommentID1 := "reply-comment-id-1"
+	replyCommentID2 := "reply-comment-id-2"
+	replyCommentID3 := "reply-comment-id-3"
+
+	// Create parent comment
+	parentComment := &postModel.Comment{
+		Base: model.Base{
+			ID:        parentCommentID,
+			CreatedAt: time.Now().Add(-time.Hour),
+			UpdatedAt: time.Now().Add(-time.Hour),
+		},
+		AuthorID:   "author123",
+		Content:    "Parent comment",
+		TargetType: "post",
+		TargetID:   "post123",
+		ParentID:   nil,
+		IsDeleted:  false,
+	}
+	err := repo.Create(parentComment)
+	assert.NoError(t, err)
+
+	// Create reply comments
+	replyComments := []struct {
+		id        string
+		authorID  string
+		content   string
+		createdAt time.Time
+	}{
+		{replyCommentID1, "user1", "First reply", time.Now().Add(-time.Minute * 30)},
+		{replyCommentID2, "user2", "Second reply", time.Now().Add(-time.Minute * 15)},
+		{replyCommentID3, "user3", "Third reply", time.Now()},
+	}
+
+	for _, reply := range replyComments {
+		replyComment := &postModel.Comment{
+			Base: model.Base{
+				ID:        reply.id,
+				CreatedAt: reply.createdAt,
+				UpdatedAt: reply.createdAt,
+			},
+			AuthorID:   reply.authorID,
+			Content:    reply.content,
+			TargetType: "post",
+			TargetID:   "post123",
+			ParentID:   &parentCommentID,
+			IsDeleted:  false,
+		}
+		err := repo.Create(replyComment)
+		assert.NoError(t, err)
+	}
+
+	// Create a comment that replies to a reply (nested reply)
+	nestedReplyID := "nested-reply-id"
+	nestedReply := &postModel.Comment{
+		Base: model.Base{
+			ID:        nestedReplyID,
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		},
+		AuthorID:   "user4",
+		Content:    "Nested reply",
+		TargetType: "post",
+		TargetID:   "post123",
+		ParentID:   &replyCommentID1,
+		IsDeleted:  false,
+	}
+	err = repo.Create(nestedReply)
+	assert.NoError(t, err)
+
+	// Create a soft-deleted reply
+	deletedReplyID := "deleted-reply-id"
+	deletedReply := &postModel.Comment{
+		Base: model.Base{
+			ID:        deletedReplyID,
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		},
+		AuthorID:   "user5",
+		Content:    "Deleted reply",
+		TargetType: "post",
+		TargetID:   "post123",
+		ParentID:   &parentCommentID,
+		IsDeleted:  true, // This should be filtered out
+	}
+	err = repo.Create(deletedReply)
+	assert.NoError(t, err)
+
+	tests := []struct {
+		name          string
+		parentID      string
+		limit         int
+		offset        int
+		expectedCount int
+		expectedErr   error
+	}{
+		{
+			name:          "list all replies to parent comment",
+			parentID:      parentCommentID,
+			limit:         10,
+			offset:        0,
+			expectedCount: 3, // Should get 3 replies (excluding nested reply and deleted reply)
+			expectedErr:   nil,
+		},
+		{
+			name:          "list replies with limit",
+			parentID:      parentCommentID,
+			limit:         2,
+			offset:        0,
+			expectedCount: 2,
+			expectedErr:   nil,
+		},
+		{
+			name:          "list replies with offset",
+			parentID:      parentCommentID,
+			limit:         10,
+			offset:        2,
+			expectedCount: 1,
+			expectedErr:   nil,
+		},
+		{
+			name:          "list replies for nested comment",
+			parentID:      replyCommentID1,
+			limit:         10,
+			offset:        0,
+			expectedCount: 1, // Should get the nested reply
+			expectedErr:   nil,
+		},
+		{
+			name:          "list replies for nonexistent parent",
+			parentID:      "nonexistent-parent",
+			limit:         10,
+			offset:        0,
+			expectedCount: 0,
+			expectedErr:   nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := repo.ListReplies(tt.parentID, tt.limit, tt.offset)
+
+			if tt.expectedErr != nil {
+				assert.Error(t, err)
+				assert.Contains(t, err.Error(), tt.expectedErr.Error())
+			} else {
+				assert.NoError(t, err)
+				assert.Len(t, result, tt.expectedCount)
+
+				// Verify all returned comments have the correct parent ID
+				for _, comment := range result {
+					assert.NotNil(t, comment.ParentID)
+					assert.Equal(t, tt.parentID, *comment.ParentID)
+					assert.False(t, comment.IsDeleted) // Soft deleted comments should be filtered out
+				}
+
+				// Verify ordering by created_at ascending
+				if len(result) > 1 {
+					for i := 0; i < len(result)-1; i++ {
+						assert.True(t, result[i].CreatedAt.Before(result[i+1].CreatedAt) ||
+							result[i].CreatedAt.Equal(result[i+1].CreatedAt))
+					}
+				}
+			}
+		})
+	}
+}
+
+// Helper function for creating string pointers
+func stringPtr(s string) *string {
+	return &s
 }

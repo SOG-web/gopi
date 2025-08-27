@@ -41,7 +41,7 @@ func (r *GormSponsorCampaignRepository) GetByID(id string) (*campaignModel.Spons
 
 func (r *GormSponsorCampaignRepository) GetByCampaignID(campaignID string) ([]*campaignModel.SponsorCampaign, error) {
 	var sponsors []gormmodel.SponsorCampaign
-	if err := r.db.Where("campaign_id = ?", campaignID).Order("created_at DESC").Find(&sponsors).Error; err != nil {
+	if err := r.db.Where("campaign_id = ?", campaignID).Order("date_created DESC").Find(&sponsors).Error; err != nil {
 		return nil, err
 	}
 
