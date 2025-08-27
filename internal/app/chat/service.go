@@ -94,17 +94,28 @@ func (s *ChatService) AddMemberToGroup(groupID, memberID, requesterID string) er
 		return err
 	}
 
-	// Check if requester is the creator or a member
-	if group.CreatorID != requesterID {
-		isMember := false
+	// Check authorization
+	if memberID == requesterID {
+		// User is joining themselves - check if already a member
 		for _, id := range group.MemberIDs {
-			if id == requesterID {
-				isMember = true
-				break
+			if id == memberID {
+				return errors.New("user is already a member")
 			}
 		}
-		if !isMember {
-			return errors.New("only group members can add new members")
+		// User is not a member, allow them to join
+	} else {
+		// User is adding someone else - check if requester has permission
+		if group.CreatorID != requesterID {
+			isMember := false
+			for _, id := range group.MemberIDs {
+				if id == requesterID {
+					isMember = true
+					break
+				}
+			}
+			if !isMember {
+				return errors.New("only group members can add new members")
+			}
 		}
 	}
 
@@ -126,6 +137,11 @@ func (s *ChatService) RemoveMemberFromGroup(groupID, memberID, requesterID strin
 }
 
 func (s *ChatService) SendMessage(senderID, groupID, content string) (*chatModel.Message, error) {
+	// Validate message content length
+	if utf8.RuneCountInString(content) > 1000 {
+		return nil, errors.New("message content must be at most 1000 characters")
+	}
+
 	// Check if sender is a member of the group
 	group, err := s.groupRepo.GetByID(groupID)
 	if err != nil {

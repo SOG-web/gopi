@@ -90,7 +90,7 @@ func (s *CampaignService) JoinCampaign(campaignID, userID string) error {
 	if err != nil {
 		return err
 	}
-	
+
 	if isMember {
 		return errors.New("user is already a member of this campaign")
 	}
@@ -173,7 +173,7 @@ func (s *CampaignService) GetCampaignsByNonOwner(excludeUserID string, limit, of
 	if err != nil {
 		return nil, err
 	}
-	
+
 	var result []*campaignModel.Campaign
 	count := 0
 	for _, campaign := range campaigns {
@@ -225,7 +225,7 @@ func (s *CampaignService) GetLeaderboard(campaignSlug string) ([]*campaignModel.
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return s.campaignRunnerRepo.GetByCampaignID(campaign.ID)
 }
 
@@ -267,9 +267,9 @@ func (s *CampaignService) FinishActivity(runnerID string, distance float64, dura
 		return err
 	}
 
-	runner.DistanceCovered = distance
+	runner.DistanceCovered += distance
 	runner.Duration = duration
-	runner.MoneyRaised = moneyRaised
+	runner.MoneyRaised += moneyRaised
 	runner.UpdatedAt = time.Now()
 
 	err = s.campaignRunnerRepo.Update(runner)
@@ -388,16 +388,16 @@ func (s *CampaignService) SearchCampaigns(query string, limit, offset int) ([]*c
 func generateSlug(ownerUsername, name string) string {
 	// Format timestamp like Django signal: "D H M S"
 	now := time.Now()
-	dateTime := fmt.Sprintf("%02d-%02d-%02d %02d %02d %02d", 
-		now.Month(), now.Day(), now.Year()%100, 
+	dateTime := fmt.Sprintf("%02d-%02d-%02d %02d %02d %02d",
+		now.Month(), now.Day(), now.Year()%100,
 		now.Hour(), now.Minute(), now.Second())
-	
+
 	// Slugify like Django: username-datetime-name
-	slug := fmt.Sprintf("%s-%s-%s", 
-		slugify(ownerUsername), 
-		dateTime, 
+	slug := fmt.Sprintf("%s-%s-%s",
+		slugify(ownerUsername),
+		dateTime,
 		slugify(name))
-	
+
 	return slug
 }
 

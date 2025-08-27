@@ -2,6 +2,7 @@ package repo
 
 import (
 	"errors"
+	"strings"
 
 	"gorm.io/gorm"
 
@@ -23,6 +24,25 @@ func (r *GormCampaignRepository) Create(campaign *campaignModel.Campaign) error 
 	if err := r.db.Create(&dbCampaign).Error; err != nil {
 		return err
 	}
+
+	// Handle Members relationships - add each member to the junction table
+	for _, memberID := range campaign.Members {
+		if userID, ok := memberID.(string); ok {
+			if err := r.AddMember(dbCampaign.ID, userID); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Handle Sponsors relationships - add each sponsor to the junction table
+	for _, sponsorID := range campaign.Sponsors {
+		if userID, ok := sponsorID.(string); ok {
+			if err := r.AddSponsor(dbCampaign.ID, userID); err != nil {
+				return err
+			}
+		}
+	}
+
 	*campaign = *gormmodel.ToDomainCampaign(dbCampaign)
 	return nil
 }
@@ -79,7 +99,7 @@ func (r *GormCampaignRepository) Delete(id string) error {
 
 func (r *GormCampaignRepository) List(limit, offset int) ([]*campaignModel.Campaign, error) {
 	var campaigns []gormmodel.Campaign
-	if err := r.db.Preload("Members").Preload("Sponsors").Limit(limit).Offset(offset).Order("created_at DESC").Find(&campaigns).Error; err != nil {
+	if err := r.db.Preload("Members").Preload("Sponsors").Limit(limit).Offset(offset).Order("date_created DESC").Find(&campaigns).Error; err != nil {
 		return nil, err
 	}
 
@@ -92,11 +112,12 @@ func (r *GormCampaignRepository) List(limit, offset int) ([]*campaignModel.Campa
 
 func (r *GormCampaignRepository) Search(query string, limit, offset int) ([]*campaignModel.Campaign, error) {
 	var campaigns []gormmodel.Campaign
-	searchPattern := "%" + query + "%"
-	
+	searchPattern := "%" + strings.ToLower(query) + "%"
+
 	if err := r.db.Preload("Members").Preload("Sponsors").
-		Where("name ILIKE ? OR description ILIKE ? OR location ILIKE ?", searchPattern, searchPattern, searchPattern).
-		Limit(limit).Offset(offset).Order("created_at DESC").Find(&campaigns).Error; err != nil {
+		Where("LOWER(name) LIKE ? OR LOWER(description) LIKE ? OR LOWER(location) LIKE ?",
+			searchPattern, searchPattern, searchPattern).
+		Limit(limit).Offset(offset).Order("date_created DESC").Find(&campaigns).Error; err != nil {
 		return nil, err
 	}
 

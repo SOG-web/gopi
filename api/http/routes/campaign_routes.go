@@ -12,37 +12,37 @@ import (
 func RegisterCampaignRoutes(router *gin.Engine, campaignService *campaign.CampaignService, userService *user.UserService, jwtService *jwt.JWTService) {
 	campaignHandler := handler.NewCampaignHandler(campaignService, userService)
 	campaignAdminHandler := handler.NewCampaignAdminHandler(campaignService, userService)
-	
+
 	// Public campaign routes
 	campaigns := router.Group("/campaigns")
 	{
-		campaigns.GET("", campaignHandler.GetCampaigns)
-		campaigns.GET("/:slug", campaignHandler.GetCampaignBySlug)
+		campaigns.GET("", campaignHandler.GetCampaigns)            // tested
+		campaigns.GET("/:slug", campaignHandler.GetCampaignBySlug) // tested
 	}
 
 	// Protected campaign routes (require authentication)
 	protectedCampaigns := router.Group("/campaigns")
 	protectedCampaigns.Use(middleware.RequireAuth(jwtService))
 	{
-		protectedCampaigns.POST("", campaignHandler.CreateCampaign)
-		protectedCampaigns.PUT("/:slug", campaignHandler.UpdateCampaign)
-		protectedCampaigns.DELETE("/:slug", campaignHandler.DeleteCampaign)
-		
+		protectedCampaigns.POST("", campaignHandler.CreateCampaign)         // tested
+		protectedCampaigns.PUT("/:slug", campaignHandler.UpdateCampaign)    // tested
+		protectedCampaigns.DELETE("/:slug", campaignHandler.DeleteCampaign) // tested
+
 		// User-specific routes
-		protectedCampaigns.GET("/by_user", campaignHandler.GetCampaignsByUser)
-		protectedCampaigns.GET("/by_others", campaignHandler.GetCampaignsByOthers)
-		
+		protectedCampaigns.GET("/by_user", campaignHandler.GetCampaignsByUser)     // tested
+		protectedCampaigns.GET("/by_others", campaignHandler.GetCampaignsByOthers) // tested
+
 		// Campaign interaction routes
-		protectedCampaigns.PUT("/:slug/join", campaignHandler.JoinCampaign)
-		protectedCampaigns.POST("/:slug/participate", campaignHandler.ParticipateCampaign)
-		protectedCampaigns.POST("/:slug/sponsor", campaignHandler.SponsorCampaign)
-		
+		protectedCampaigns.PUT("/:slug/join", campaignHandler.JoinCampaign)                // tested
+		protectedCampaigns.POST("/:slug/participate", campaignHandler.ParticipateCampaign) // tested
+		protectedCampaigns.POST("/:slug/sponsor", campaignHandler.SponsorCampaign)         // tested
+
 		// Campaign info routes
-		protectedCampaigns.GET("/:slug/leaderboard", campaignHandler.GetCampaignLeaderboard)
-		
+		protectedCampaigns.GET("/:slug/leaderboard", campaignHandler.GetCampaignLeaderboard) // tested
+
 		// Campaign finish routes
-		protectedCampaigns.GET("/:slug/finish_campaign/:runner_id", campaignHandler.GetFinishCampaignDetails)
-		protectedCampaigns.PUT("/:slug/finish_campaign/:runner_id", campaignHandler.FinishCampaignRun)
+		protectedCampaigns.GET("/:slug/finish_campaign/:runner_id", campaignHandler.GetFinishCampaignDetails) // tested
+		protectedCampaigns.PUT("/:slug/finish_campaign/:runner_id", campaignHandler.FinishCampaignRun)        // tested
 	}
 
 	// Admin routes for campaign management
@@ -56,7 +56,7 @@ func RegisterCampaignRoutes(router *gin.Engine, campaignService *campaign.Campai
 		adminCampaigns.GET("/campaign-runners/:id", campaignAdminHandler.GetCampaignRunnerByID)
 		adminCampaigns.PUT("/campaign-runners/:id", campaignAdminHandler.UpdateCampaignRunner)
 		adminCampaigns.DELETE("/campaign-runners/:id", campaignAdminHandler.DeleteCampaignRunner)
-		
+
 		// Sponsor Campaign admin routes
 		adminCampaigns.POST("/sponsor-campaigns", campaignAdminHandler.CreateSponsorCampaign)
 		adminCampaigns.GET("/sponsor-campaigns", campaignAdminHandler.GetSponsorCampaigns)

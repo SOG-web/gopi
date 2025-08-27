@@ -1,26 +1,27 @@
 package handler
 
 import (
+	"fmt"
+	"io"
 	"net/http"
 	"strconv"
-    "fmt"
-    "io"
-    "strings"
-    "time"
+	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"gopi.com/api/http/dto"
 	postApp "gopi.com/internal/app/post"
-    "gopi.com/internal/lib/storage"
+	"gopi.com/internal/apperr"
+	"gopi.com/internal/lib/storage"
 )
 
 type PostHandler struct {
-    service *postApp.Service
-    storage storage.Storage
+	service *postApp.Service
+	storage storage.Storage
 }
 
 func NewPostHandler(svc *postApp.Service, st storage.Storage) *PostHandler {
-    return &PostHandler{service: svc, storage: st}
+	return &PostHandler{service: svc, storage: st}
 }
 
 // Public endpoints
@@ -36,13 +37,13 @@ func NewPostHandler(svc *postApp.Service, st storage.Storage) *PostHandler {
 // @Failure 500 {object} dto.PostResponse
 // @Router /posts [get]
 func (h *PostHandler) ListPublishedPosts(c *gin.Context) {
-    limit, offset := parsePagination(c, 20)
-    posts, err := h.service.ListPublished(limit, offset)
-    if err != nil {
-        c.JSON(http.StatusInternalServerError, dto.PostResponse{Success: false, StatusCode: http.StatusInternalServerError, Message: err.Error()})
-        return
-    }
-    c.JSON(http.StatusOK, dto.ListPostsResponse{Success: true, StatusCode: http.StatusOK, Data: posts, Count: len(posts)})
+	limit, offset := parsePagination(c, 20)
+	posts, err := h.service.ListPublished(limit, offset)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, dto.PostResponse{Success: false, StatusCode: http.StatusInternalServerError, Message: err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, dto.ListPostsResponse{Success: true, StatusCode: http.StatusOK, Data: posts, Count: len(posts)})
 }
 
 // GetPostBySlug godoc
@@ -55,13 +56,13 @@ func (h *PostHandler) ListPublishedPosts(c *gin.Context) {
 // @Failure 404 {object} dto.PostResponse
 // @Router /posts/{slug} [get]
 func (h *PostHandler) GetPostBySlug(c *gin.Context) {
-    slug := c.Param("slug")
-    post, err := h.service.GetPostBySlug(slug)
-    if err != nil {
-        c.JSON(http.StatusNotFound, dto.PostResponse{Success: false, StatusCode: http.StatusNotFound, Message: "post not found"})
-        return
-    }
-    c.JSON(http.StatusOK, dto.PostResponse{Success: true, StatusCode: http.StatusOK, Data: post})
+	slug := c.Param("slug")
+	post, err := h.service.GetPostBySlug(slug)
+	if err != nil {
+		c.JSON(http.StatusNotFound, dto.PostResponse{Success: false, StatusCode: http.StatusNotFound, Message: "post not found"})
+		return
+	}
+	c.JSON(http.StatusOK, dto.PostResponse{Success: true, StatusCode: http.StatusOK, Data: post})
 }
 
 // Admin endpoints
@@ -80,18 +81,24 @@ func (h *PostHandler) GetPostBySlug(c *gin.Context) {
 // @Failure 403 {object} dto.PostResponse
 // @Router /posts/admin [post]
 func (h *PostHandler) CreatePost(c *gin.Context) {
-    var req dto.CreatePostRequest
-    if err := c.ShouldBindJSON(&req); err != nil {
-        c.JSON(http.StatusBadRequest, dto.PostResponse{Success: false, StatusCode: http.StatusBadRequest, Message: err.Error()})
-        return
-    }
-    authorID := c.GetString("user_id")
-    post, err := h.service.CreatePost(authorID, req.Title, req.Content, req.CoverImageURL, req.Publish)
-    if err != nil {
-        c.JSON(http.StatusBadRequest, dto.PostResponse{Success: false, StatusCode: http.StatusBadRequest, Message: err.Error()})
-        return
-    }
-    c.JSON(http.StatusCreated, dto.PostResponse{Success: true, StatusCode: http.StatusCreated, Data: post})
+	var req dto.CreatePostRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		respondError(c, apperr.E("CreatePost", apperr.InvalidInput, err, "Invalid request body"))
+		return
+	}
+	authorID := c.GetString("user_id")
+	post, err := h.service.CreatePost(authorID, req.Title, req.Content, req.CoverImageURL, req.Publish)
+	if err != nil {
+		// Check if it's a validation error (title/content validation)
+		if strings.Contains(err.Error(), "must be 1-200 characters") || strings.Contains(err.Error(), "is required") {
+			respondError(c, apperr.E("CreatePost", apperr.InvalidInput, err, err.Error()))
+		} else {
+			// Repository or other internal error
+			respondError(c, apperr.E("CreatePost", apperr.Internal, err, "Failed to create post"))
+		}
+		return
+	}
+	c.JSON(http.StatusCreated, dto.PostResponse{Success: true, StatusCode: http.StatusCreated, Data: post})
 }
 
 // UpdatePost godoc
@@ -109,18 +116,30 @@ func (h *PostHandler) CreatePost(c *gin.Context) {
 // @Failure 403 {object} dto.PostResponse
 // @Router /posts/admin/{id} [put]
 func (h *PostHandler) UpdatePost(c *gin.Context) {
-    postID := c.Param("id")
-    var req dto.UpdatePostRequest
-    if err := c.ShouldBindJSON(&req); err != nil {
-        c.JSON(http.StatusBadRequest, dto.PostResponse{Success: false, StatusCode: http.StatusBadRequest, Message: err.Error()})
-        return
-    }
-    post, err := h.service.UpdatePost(postID, req.Title, req.Content, req.CoverImageURL)
-    if err != nil {
-        c.JSON(http.StatusBadRequest, dto.PostResponse{Success: false, StatusCode: http.StatusBadRequest, Message: err.Error()})
-        return
-    }
-    c.JSON(http.StatusOK, dto.PostResponse{Success: true, StatusCode: http.StatusOK, Data: post})
+	postID := c.Param("id")
+	var req dto.UpdatePostRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		respondError(c, apperr.E("UpdatePost", apperr.InvalidInput, err, "Invalid request body"))
+		return
+	}
+	post, err := h.service.UpdatePost(postID, req.Title, req.Content, req.CoverImageURL)
+	if err != nil {
+		// Check if it's a validation error (title validation)
+		if strings.Contains(err.Error(), "must be at most 200 characters") {
+			respondError(c, apperr.E("UpdatePost", apperr.InvalidInput, err, err.Error()))
+		} else {
+			// Check if it's a "not found" error by trying to get the post first
+			_, getErr := h.service.GetPostByID(postID)
+			if getErr != nil {
+				respondError(c, apperr.E("UpdatePost", apperr.NotFound, err, "Post not found"))
+			} else {
+				// Repository or other internal error
+				respondError(c, apperr.E("UpdatePost", apperr.Internal, err, "Failed to update post"))
+			}
+		}
+		return
+	}
+	c.JSON(http.StatusOK, dto.PostResponse{Success: true, StatusCode: http.StatusOK, Data: post})
 }
 
 // PublishPost godoc
@@ -136,13 +155,13 @@ func (h *PostHandler) UpdatePost(c *gin.Context) {
 // @Failure 403 {object} dto.PostResponse
 // @Router /posts/admin/{id}/publish [post]
 func (h *PostHandler) PublishPost(c *gin.Context) {
-    postID := c.Param("id")
-    post, err := h.service.PublishPost(postID)
-    if err != nil {
-        c.JSON(http.StatusBadRequest, dto.PostResponse{Success: false, StatusCode: http.StatusBadRequest, Message: err.Error()})
-        return
-    }
-    c.JSON(http.StatusOK, dto.PostResponse{Success: true, StatusCode: http.StatusOK, Data: post})
+	postID := c.Param("id")
+	post, err := h.service.PublishPost(postID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, dto.PostResponse{Success: false, StatusCode: http.StatusBadRequest, Message: err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, dto.PostResponse{Success: true, StatusCode: http.StatusOK, Data: post})
 }
 
 // UnpublishPost godoc
@@ -158,13 +177,13 @@ func (h *PostHandler) PublishPost(c *gin.Context) {
 // @Failure 403 {object} dto.PostResponse
 // @Router /posts/admin/{id}/unpublish [post]
 func (h *PostHandler) UnpublishPost(c *gin.Context) {
-    postID := c.Param("id")
-    post, err := h.service.UnpublishPost(postID)
-    if err != nil {
-        c.JSON(http.StatusBadRequest, dto.PostResponse{Success: false, StatusCode: http.StatusBadRequest, Message: err.Error()})
-        return
-    }
-    c.JSON(http.StatusOK, dto.PostResponse{Success: true, StatusCode: http.StatusOK, Data: post})
+	postID := c.Param("id")
+	post, err := h.service.UnpublishPost(postID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, dto.PostResponse{Success: false, StatusCode: http.StatusBadRequest, Message: err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, dto.PostResponse{Success: true, StatusCode: http.StatusOK, Data: post})
 }
 
 // DeletePost godoc
@@ -181,30 +200,30 @@ func (h *PostHandler) UnpublishPost(c *gin.Context) {
 // @Failure 404 {object} dto.PostResponse
 // @Router /posts/{id} [delete]
 func (h *PostHandler) DeletePost(c *gin.Context) {
-    postID := c.Param("id")
-    requesterID := c.GetString("user_id")
-    isSuperuserAny, _ := c.Get("is_superuser")
-    isSuperuser := false
-    if v, ok := isSuperuserAny.(bool); ok {
-        isSuperuser = v
-    }
+	postID := c.Param("id")
+	requesterID := c.GetString("user_id")
+	isSuperuserAny, _ := c.Get("is_superuser")
+	isSuperuser := false
+	if v, ok := isSuperuserAny.(bool); ok {
+		isSuperuser = v
+	}
 
-    p, err := h.service.GetPostByID(postID)
-    if err != nil {
-        c.JSON(http.StatusNotFound, dto.PostResponse{Success: false, StatusCode: http.StatusNotFound, Message: "post not found"})
-        return
-    }
+	p, err := h.service.GetPostByID(postID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, dto.PostResponse{Success: false, StatusCode: http.StatusNotFound, Message: "post not found"})
+		return
+	}
 
-    if p.AuthorID != requesterID && !isSuperuser {
-        c.JSON(http.StatusForbidden, dto.PostResponse{Success: false, StatusCode: http.StatusForbidden, Message: "only author or superuser can delete the post"})
-        return
-    }
+	if p.AuthorID != requesterID && !isSuperuser {
+		c.JSON(http.StatusForbidden, dto.PostResponse{Success: false, StatusCode: http.StatusForbidden, Message: "only author or superuser can delete the post"})
+		return
+	}
 
-    if err := h.service.DeletePost(postID); err != nil {
-        c.JSON(http.StatusBadRequest, dto.PostResponse{Success: false, StatusCode: http.StatusBadRequest, Message: err.Error()})
-        return
-    }
-    c.JSON(http.StatusOK, dto.PostResponse{Success: true, StatusCode: http.StatusOK, Message: "post deleted"})
+	if err := h.service.DeletePost(postID); err != nil {
+		c.JSON(http.StatusBadRequest, dto.PostResponse{Success: false, StatusCode: http.StatusBadRequest, Message: err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, dto.PostResponse{Success: true, StatusCode: http.StatusOK, Message: "post deleted"})
 }
 
 // Comments endpoints
@@ -222,18 +241,18 @@ func (h *PostHandler) DeletePost(c *gin.Context) {
 // @Failure 401 {object} dto.CommentResponse
 // @Router /comments [post]
 func (h *PostHandler) CreateComment(c *gin.Context) {
-    var req dto.CreateCommentRequest
-    if err := c.ShouldBindJSON(&req); err != nil {
-        c.JSON(http.StatusBadRequest, dto.CommentResponse{Success: false, StatusCode: http.StatusBadRequest, Message: err.Error()})
-        return
-    }
-    authorID := c.GetString("user_id")
-    comment, err := h.service.CreateComment(authorID, req.TargetType, req.TargetID, req.Content, req.ParentID)
-    if err != nil {
-        c.JSON(http.StatusBadRequest, dto.CommentResponse{Success: false, StatusCode: http.StatusBadRequest, Message: err.Error()})
-        return
-    }
-    c.JSON(http.StatusCreated, dto.CommentResponse{Success: true, StatusCode: http.StatusCreated, Data: comment})
+	var req dto.CreateCommentRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, dto.CommentResponse{Success: false, StatusCode: http.StatusBadRequest, Message: err.Error()})
+		return
+	}
+	authorID := c.GetString("user_id")
+	comment, err := h.service.CreateComment(authorID, req.TargetType, req.TargetID, req.Content, req.ParentID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, dto.CommentResponse{Success: false, StatusCode: http.StatusBadRequest, Message: err.Error()})
+		return
+	}
+	c.JSON(http.StatusCreated, dto.CommentResponse{Success: true, StatusCode: http.StatusCreated, Data: comment})
 }
 
 // UpdateComment godoc
@@ -252,19 +271,28 @@ func (h *PostHandler) CreateComment(c *gin.Context) {
 // @Failure 404 {object} dto.CommentResponse
 // @Router /comments/{id} [put]
 func (h *PostHandler) UpdateComment(c *gin.Context) {
-    commentID := c.Param("id")
-    var req dto.UpdateCommentRequest
-    if err := c.ShouldBindJSON(&req); err != nil {
-        c.JSON(http.StatusBadRequest, dto.CommentResponse{Success: false, StatusCode: http.StatusBadRequest, Message: err.Error()})
-        return
-    }
-    requesterID := c.GetString("user_id")
-    comment, err := h.service.UpdateComment(commentID, requesterID, req.Content)
-    if err != nil {
-        c.JSON(http.StatusBadRequest, dto.CommentResponse{Success: false, StatusCode: http.StatusBadRequest, Message: err.Error()})
-        return
-    }
-    c.JSON(http.StatusOK, dto.CommentResponse{Success: true, StatusCode: http.StatusOK, Data: comment})
+	commentID := c.Param("commentID")
+	var req dto.UpdateCommentRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		respondError(c, apperr.E("UpdateComment", apperr.InvalidInput, err, "Invalid request body"))
+		return
+	}
+	requesterID := c.GetString("user_id")
+	comment, err := h.service.UpdateComment(commentID, requesterID, req.Content)
+	if err != nil {
+		// Check if it's a validation error (content length)
+		if strings.Contains(err.Error(), "must be 1-2000 characters") {
+			respondError(c, apperr.E("UpdateComment", apperr.InvalidInput, err, err.Error()))
+		} else if strings.Contains(err.Error(), "only the author can update") {
+			respondError(c, apperr.E("UpdateComment", apperr.Forbidden, err, err.Error()))
+		} else {
+			// For repository errors (like not found), return 404
+			// The service returns repository errors directly when GetByID fails
+			respondError(c, apperr.E("UpdateComment", apperr.NotFound, err, "Comment not found"))
+		}
+		return
+	}
+	c.JSON(http.StatusOK, dto.CommentResponse{Success: true, StatusCode: http.StatusOK, Data: comment})
 }
 
 // DeleteComment godoc
@@ -281,13 +309,20 @@ func (h *PostHandler) UpdateComment(c *gin.Context) {
 // @Failure 404 {object} dto.CommentResponse
 // @Router /comments/{id} [delete]
 func (h *PostHandler) DeleteComment(c *gin.Context) {
-    commentID := c.Param("id")
-    requesterID := c.GetString("user_id")
-    if err := h.service.DeleteComment(commentID, requesterID); err != nil {
-        c.JSON(http.StatusBadRequest, dto.CommentResponse{Success: false, StatusCode: http.StatusBadRequest, Message: err.Error()})
-        return
-    }
-    c.JSON(http.StatusOK, dto.CommentResponse{Success: true, StatusCode: http.StatusOK, Message: "comment deleted"})
+	commentID := c.Param("commentID")
+	requesterID := c.GetString("user_id")
+	if err := h.service.DeleteComment(commentID, requesterID); err != nil {
+		// Check if it's an authorization error
+		if strings.Contains(err.Error(), "only the author can delete") {
+			respondError(c, apperr.E("DeleteComment", apperr.Forbidden, err, err.Error()))
+		} else {
+			// For repository errors (like not found), return 404
+			// The service returns repository errors directly when GetByID fails
+			respondError(c, apperr.E("DeleteComment", apperr.NotFound, err, "Comment not found"))
+		}
+		return
+	}
+	c.JSON(http.StatusOK, dto.CommentResponse{Success: true, StatusCode: http.StatusOK, Message: "comment deleted"})
 }
 
 // ListCommentsByTarget godoc
@@ -303,15 +338,15 @@ func (h *PostHandler) DeleteComment(c *gin.Context) {
 // @Failure 500 {object} dto.CommentResponse
 // @Router /comments/{targetType}/{targetID} [get]
 func (h *PostHandler) ListCommentsByTarget(c *gin.Context) {
-    targetType := c.Param("targetType")
-    targetID := c.Param("targetID")
-    limit, offset := parsePagination(c, 50)
-    comments, err := h.service.ListCommentsByTarget(targetType, targetID, limit, offset)
-    if err != nil {
-        c.JSON(http.StatusInternalServerError, dto.CommentResponse{Success: false, StatusCode: http.StatusInternalServerError, Message: err.Error()})
-        return
-    }
-    c.JSON(http.StatusOK, dto.ListCommentsResponse{Success: true, StatusCode: http.StatusOK, Data: comments, Count: len(comments)})
+	targetType := c.Param("targetType")
+	targetID := c.Param("targetID")
+	limit, offset := parsePagination(c, 50)
+	comments, err := h.service.ListCommentsByTarget(targetType, targetID, limit, offset)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, dto.CommentResponse{Success: false, StatusCode: http.StatusInternalServerError, Message: err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, dto.ListCommentsResponse{Success: true, StatusCode: http.StatusOK, Data: comments, Count: len(comments)})
 }
 
 // UploadCoverImage godoc
@@ -331,122 +366,126 @@ func (h *PostHandler) ListCommentsByTarget(c *gin.Context) {
 // @Failure 500 {object} dto.PostResponse
 // @Router /posts/{id}/cover [post]
 func (h *PostHandler) UploadCoverImage(c *gin.Context) {
-    userID := c.GetString("user_id")
-    if userID == "" {
-        c.JSON(http.StatusUnauthorized, dto.PostResponse{Success: false, StatusCode: http.StatusUnauthorized, Message: "unauthorized"})
-        return
-    }
+	userID := c.GetString("user_id")
+	if userID == "" {
+		c.JSON(http.StatusUnauthorized, dto.PostResponse{Success: false, StatusCode: http.StatusUnauthorized, Message: "unauthorized"})
+		return
+	}
 
-    postID := c.Param("id")
-    p, err := h.service.GetPostByID(postID)
-    if err != nil {
-        c.JSON(http.StatusNotFound, dto.PostResponse{Success: false, StatusCode: http.StatusNotFound, Message: "post not found"})
-        return
-    }
+	postID := c.Param("id")
+	p, err := h.service.GetPostByID(postID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, dto.PostResponse{Success: false, StatusCode: http.StatusNotFound, Message: "post not found"})
+		return
+	}
 
-    isStaffAny, _ := c.Get("is_staff")
-    isSuperuserAny, _ := c.Get("is_superuser")
-    isStaff := false
-    isSuperuser := false
-    if v, ok := isStaffAny.(bool); ok { isStaff = v }
-    if v, ok := isSuperuserAny.(bool); ok { isSuperuser = v }
-    if p.AuthorID != userID && !isStaff && !isSuperuser {
-        c.JSON(http.StatusForbidden, dto.PostResponse{Success: false, StatusCode: http.StatusForbidden, Message: "forbidden"})
-        return
-    }
+	isStaffAny, _ := c.Get("is_staff")
+	isSuperuserAny, _ := c.Get("is_superuser")
+	isStaff := false
+	isSuperuser := false
+	if v, ok := isStaffAny.(bool); ok {
+		isStaff = v
+	}
+	if v, ok := isSuperuserAny.(bool); ok {
+		isSuperuser = v
+	}
+	if p.AuthorID != userID && !isStaff && !isSuperuser {
+		c.JSON(http.StatusForbidden, dto.PostResponse{Success: false, StatusCode: http.StatusForbidden, Message: "forbidden"})
+		return
+	}
 
-    fileHeader, err := c.FormFile("image")
-    if err != nil {
-        c.JSON(http.StatusBadRequest, dto.PostResponse{Success: false, StatusCode: http.StatusBadRequest, Message: "image file is required"})
-        return
-    }
-    if fileHeader.Size <= 0 || fileHeader.Size > 10*1024*1024 { // 10MB limit
-        c.JSON(http.StatusBadRequest, dto.PostResponse{Success: false, StatusCode: http.StatusBadRequest, Message: "file too large (max 10MB)"})
-        return
-    }
+	fileHeader, err := c.FormFile("image")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, dto.PostResponse{Success: false, StatusCode: http.StatusBadRequest, Message: "image file is required"})
+		return
+	}
+	if fileHeader.Size <= 0 || fileHeader.Size > 10*1024*1024 { // 10MB limit
+		c.JSON(http.StatusBadRequest, dto.PostResponse{Success: false, StatusCode: http.StatusBadRequest, Message: "file too large (max 10MB)"})
+		return
+	}
 
-    src, err := fileHeader.Open()
-    if err != nil {
-        c.JSON(http.StatusBadRequest, dto.PostResponse{Success: false, StatusCode: http.StatusBadRequest, Message: "cannot open uploaded file"})
-        return
-    }
-    defer src.Close()
+	src, err := fileHeader.Open()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, dto.PostResponse{Success: false, StatusCode: http.StatusBadRequest, Message: "cannot open uploaded file"})
+		return
+	}
+	defer src.Close()
 
-    // Sniff MIME type
-    buf := make([]byte, 512)
-    n, _ := io.ReadFull(src, buf)
-    mimeType := http.DetectContentType(buf[:n])
-    _ = src.Close()
+	// Sniff MIME type
+	buf := make([]byte, 512)
+	n, _ := io.ReadFull(src, buf)
+	mimeType := http.DetectContentType(buf[:n])
+	_ = src.Close()
 
-    allowed := map[string]string{
-        "image/png":  ".png",
-        "image/jpeg": ".jpg",
-        "image/webp": ".webp",
-        "image/gif":  ".gif",
-    }
-    ext, ok := allowed[mimeType]
-    if !ok {
-        lower := strings.ToLower(fileHeader.Filename)
-        switch {
-        case strings.HasSuffix(lower, ".png"):
-            ext = ".png"
-        case strings.HasSuffix(lower, ".jpg"), strings.HasSuffix(lower, ".jpeg"):
-            ext = ".jpg"
-        case strings.HasSuffix(lower, ".webp"):
-            ext = ".webp"
-        case strings.HasSuffix(lower, ".gif"):
-            ext = ".gif"
-        default:
-            c.JSON(http.StatusBadRequest, dto.PostResponse{Success: false, StatusCode: http.StatusBadRequest, Message: "unsupported image type"})
-            return
-        }
-    }
+	allowed := map[string]string{
+		"image/png":  ".png",
+		"image/jpeg": ".jpg",
+		"image/webp": ".webp",
+		"image/gif":  ".gif",
+	}
+	ext, ok := allowed[mimeType]
+	if !ok {
+		lower := strings.ToLower(fileHeader.Filename)
+		switch {
+		case strings.HasSuffix(lower, ".png"):
+			ext = ".png"
+		case strings.HasSuffix(lower, ".jpg"), strings.HasSuffix(lower, ".jpeg"):
+			ext = ".jpg"
+		case strings.HasSuffix(lower, ".webp"):
+			ext = ".webp"
+		case strings.HasSuffix(lower, ".gif"):
+			ext = ".gif"
+		default:
+			c.JSON(http.StatusBadRequest, dto.PostResponse{Success: false, StatusCode: http.StatusBadRequest, Message: "unsupported image type"})
+			return
+		}
+	}
 
-    filename := fmt.Sprintf("%s-%d%s", postID, time.Now().UnixNano(), ext)
-    key := "posts/" + filename
+	filename := fmt.Sprintf("%s-%d%s", postID, time.Now().UnixNano(), ext)
+	key := "posts/" + filename
 
-    src2, err := fileHeader.Open()
-    if err != nil {
-        c.JSON(http.StatusInternalServerError, dto.PostResponse{Success: false, StatusCode: http.StatusInternalServerError, Message: "failed to read file"})
-        return
-    }
-    defer src2.Close()
+	src2, err := fileHeader.Open()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, dto.PostResponse{Success: false, StatusCode: http.StatusInternalServerError, Message: "failed to read file"})
+		return
+	}
+	defer src2.Close()
 
-    publicURL, err := h.storage.Save(c.Request.Context(), key, src2, fileHeader.Size, mimeType)
-    if err != nil {
-        c.JSON(http.StatusInternalServerError, dto.PostResponse{Success: false, StatusCode: http.StatusInternalServerError, Message: "failed to store file"})
-        return
-    }
+	publicURL, err := h.storage.Save(c.Request.Context(), key, src2, fileHeader.Size, mimeType)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, dto.PostResponse{Success: false, StatusCode: http.StatusInternalServerError, Message: "failed to store file"})
+		return
+	}
 
-    // Update post cover image URL
-    updated, err := h.service.UpdatePost(postID, "", "", publicURL)
-    if err != nil {
-        // best-effort cleanup
-        _ = h.storage.Delete(c.Request.Context(), key)
-        c.JSON(http.StatusInternalServerError, dto.PostResponse{Success: false, StatusCode: http.StatusInternalServerError, Message: "failed to update post"})
-        return
-    }
+	// Update post cover image URL
+	updated, err := h.service.UpdatePost(postID, "", "", publicURL)
+	if err != nil {
+		// best-effort cleanup
+		_ = h.storage.Delete(c.Request.Context(), key)
+		c.JSON(http.StatusInternalServerError, dto.PostResponse{Success: false, StatusCode: http.StatusInternalServerError, Message: "failed to update post"})
+		return
+	}
 
-    c.JSON(http.StatusOK, dto.PostResponse{Success: true, StatusCode: http.StatusOK, Data: updated})
+	c.JSON(http.StatusOK, dto.PostResponse{Success: true, StatusCode: http.StatusOK, Data: updated})
 }
 
 // helper
 func parsePagination(c *gin.Context, defaultLimit int) (int, int) {
-    pageStr := c.Query("page")
-    limitStr := c.Query("limit")
-    page := 1
-    limit := defaultLimit
-    var err error
-    if pageStr != "" {
-        if page, err = strconv.Atoi(pageStr); err != nil || page < 1 {
-            page = 1
-        }
-    }
-    if limitStr != "" {
-        if limit, err = strconv.Atoi(limitStr); err != nil || limit < 1 || limit > 100 {
-            limit = defaultLimit
-        }
-    }
-    offset := (page - 1) * limit
-    return limit, offset
+	pageStr := c.Query("page")
+	limitStr := c.Query("limit")
+	page := 1
+	limit := defaultLimit
+	var err error
+	if pageStr != "" {
+		if page, err = strconv.Atoi(pageStr); err != nil || page < 1 {
+			page = 1
+		}
+	}
+	if limitStr != "" {
+		if limit, err = strconv.Atoi(limitStr); err != nil || limit < 1 || limit > 100 {
+			limit = defaultLimit
+		}
+	}
+	offset := (page - 1) * limit
+	return limit, offset
 }

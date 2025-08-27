@@ -18,7 +18,7 @@ type Campaign struct {
 	Condition         string `gorm:"type:text"`
 	Mode              string `gorm:"type:varchar(50);index"`
 	Goal              string
-	Activity          string `gorm:"type:varchar(50);index"`
+	Activity          string  `gorm:"type:varchar(50);index"`
 	AcceptTac         bool    `gorm:"default:false"`
 	Location          string  `gorm:"index"`
 	MoneyRaised       float64 `gorm:"default:0;index"`
@@ -33,13 +33,13 @@ type Campaign struct {
 	WorkoutImg        string
 	CreatedAt         time.Time `gorm:"index;column:date_created"`
 	UpdatedAt         time.Time `gorm:"column:date_updated"`
-	
+
 	// Database relationships - proper foreign keys and many-to-many
-	Owner             userGorm.UserGORM    `gorm:"foreignKey:OwnerID;constraint:OnDelete:CASCADE"`
-	Members           []CampaignMember     `gorm:"foreignKey:CampaignID;constraint:OnDelete:CASCADE"`
-	Sponsors          []CampaignSponsor    `gorm:"foreignKey:CampaignID;constraint:OnDelete:CASCADE"`
-	CampaignRunners   []CampaignRunner     `gorm:"foreignKey:CampaignID;constraint:OnDelete:CASCADE"`
-	SponsorCampaigns  []SponsorCampaign    `gorm:"foreignKey:CampaignID;constraint:OnDelete:CASCADE"`
+	Owner            userGorm.UserGORM `gorm:"foreignKey:OwnerID;constraint:OnDelete:CASCADE"`
+	Members          []CampaignMember  `gorm:"foreignKey:CampaignID;constraint:OnDelete:CASCADE"`
+	Sponsors         []CampaignSponsor `gorm:"foreignKey:CampaignID;constraint:OnDelete:CASCADE"`
+	CampaignRunners  []CampaignRunner  `gorm:"foreignKey:CampaignID;constraint:OnDelete:CASCADE"`
+	SponsorCampaigns []SponsorCampaign `gorm:"foreignKey:CampaignID;constraint:OnDelete:CASCADE"`
 }
 
 func (Campaign) TableName() string {
@@ -48,14 +48,14 @@ func (Campaign) TableName() string {
 
 // Junction table for Campaign Members (many-to-many)
 type CampaignMember struct {
-	ID         string `gorm:"type:varchar(255);primary_key"`
-	CampaignID string `gorm:"not null;index;uniqueIndex:idx_campaign_member"`
-	UserID     string `gorm:"not null;index;uniqueIndex:idx_campaign_member"`
+	ID         string    `gorm:"type:varchar(255);primary_key"`
+	CampaignID string    `gorm:"not null;index;uniqueIndex:idx_campaign_member"`
+	UserID     string    `gorm:"not null;index;uniqueIndex:idx_campaign_member"`
 	JoinedAt   time.Time `gorm:"default:CURRENT_TIMESTAMP"`
-	
+
 	// Foreign key relationships
-	Campaign   Campaign          `gorm:"foreignKey:CampaignID;constraint:OnDelete:CASCADE"`
-	User       userGorm.UserGORM `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
+	Campaign Campaign          `gorm:"foreignKey:CampaignID;constraint:OnDelete:CASCADE"`
+	User     userGorm.UserGORM `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
 }
 
 func (CampaignMember) TableName() string {
@@ -64,14 +64,14 @@ func (CampaignMember) TableName() string {
 
 // Junction table for Campaign Sponsors (many-to-many)
 type CampaignSponsor struct {
-	ID         string `gorm:"type:varchar(255);primary_key"`
-	CampaignID string `gorm:"not null;index;uniqueIndex:idx_campaign_sponsor"`
-	UserID     string `gorm:"not null;index;uniqueIndex:idx_campaign_sponsor"`
+	ID          string    `gorm:"type:varchar(255);primary_key"`
+	CampaignID  string    `gorm:"not null;index;uniqueIndex:idx_campaign_sponsor"`
+	UserID      string    `gorm:"not null;index;uniqueIndex:idx_campaign_sponsor"`
 	SponsoredAt time.Time `gorm:"default:CURRENT_TIMESTAMP"`
-	
+
 	// Foreign key relationships
-	Campaign   Campaign          `gorm:"foreignKey:CampaignID;constraint:OnDelete:CASCADE"`
-	User       userGorm.UserGORM `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
+	Campaign Campaign          `gorm:"foreignKey:CampaignID;constraint:OnDelete:CASCADE"`
+	User     userGorm.UserGORM `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
 }
 
 func (CampaignSponsor) TableName() string {
@@ -79,21 +79,21 @@ func (CampaignSponsor) TableName() string {
 }
 
 type CampaignRunner struct {
-	ID              string `gorm:"type:varchar(255);primary_key"`
-	CampaignID      string `gorm:"not null;index"`
+	ID              string  `gorm:"type:varchar(255);primary_key"`
+	CampaignID      string  `gorm:"not null;index"`
 	DistanceCovered float64 `gorm:"default:0;index"`
 	Duration        string
 	MoneyRaised     float64 `gorm:"default:0;index"`
 	CoverImage      string
-	Activity        string `gorm:"type:varchar(50);index"`
-	OwnerID         string `gorm:"not null;index"`
+	Activity        string    `gorm:"type:varchar(50);index"`
+	OwnerID         string    `gorm:"not null;index"`
 	DateJoined      time.Time `gorm:"index;column:date_joined"`
 	CreatedAt       time.Time `gorm:"index"`
 	UpdatedAt       time.Time `gorm:"column:date_updated"`
-	
+
 	// Database relationships
-	Campaign        Campaign          `gorm:"foreignKey:CampaignID;constraint:OnDelete:CASCADE"`
-	Owner           userGorm.UserGORM `gorm:"foreignKey:OwnerID;constraint:OnDelete:CASCADE"`
+	Campaign Campaign          `gorm:"foreignKey:CampaignID;constraint:OnDelete:CASCADE"`
+	Owner    userGorm.UserGORM `gorm:"foreignKey:OwnerID;constraint:OnDelete:CASCADE"`
 }
 
 func (CampaignRunner) TableName() string {
@@ -101,9 +101,9 @@ func (CampaignRunner) TableName() string {
 }
 
 type SponsorCampaign struct {
-	ID          string `gorm:"type:varchar(255);primary_key"`
-	Sponsors    string `gorm:"type:text"` // JSON array stored as text for multiple sponsors
-	CampaignID  string `gorm:"not null;index"`
+	ID          string  `gorm:"type:varchar(255);primary_key"`
+	Sponsors    string  `gorm:"type:text"` // JSON array stored as text for multiple sponsors
+	CampaignID  string  `gorm:"not null;index"`
 	Distance    float64 `gorm:"default:0;index"`
 	AmountPerKm float64 `gorm:"default:0"`
 	TotalAmount float64 `gorm:"default:0;index"`
@@ -111,9 +111,9 @@ type SponsorCampaign struct {
 	VideoUrl    string
 	CreatedAt   time.Time `gorm:"index;column:date_created"`
 	UpdatedAt   time.Time
-	
+
 	// Database relationships
-	Campaign    Campaign `gorm:"foreignKey:CampaignID;constraint:OnDelete:CASCADE"`
+	Campaign Campaign `gorm:"foreignKey:CampaignID;constraint:OnDelete:CASCADE"`
 }
 
 func (SponsorCampaign) TableName() string {
@@ -189,14 +189,14 @@ func ToDomainCampaign(c *Campaign) *campaignModel.Campaign {
 	var members []interface{}
 	var sponsors []interface{}
 
-	// Convert Members relationship to interface{} slice
+	// Convert Members relationship to interface{} slice (extract UserID)
 	for _, member := range c.Members {
-		members = append(members, member)
+		members = append(members, member.UserID)
 	}
-	
-	// Convert Sponsors relationship to interface{} slice  
+
+	// Convert Sponsors relationship to interface{} slice (extract UserID)
 	for _, sponsor := range c.Sponsors {
-		sponsors = append(sponsors, sponsor)
+		sponsors = append(sponsors, sponsor.UserID)
 	}
 
 	return &campaignModel.Campaign{
@@ -205,26 +205,26 @@ func ToDomainCampaign(c *Campaign) *campaignModel.Campaign {
 			CreatedAt: c.CreatedAt,
 			UpdatedAt: c.UpdatedAt,
 		},
-		Name:               c.Name,
-		Description:        c.Description,
-		Condition:          c.Condition,
-		Mode:               campaignModel.CampaignMode(c.Mode),
-		Goal:               c.Goal,
-		Activity:           campaignModel.Activity(c.Activity),
-		AcceptTac:          c.AcceptTac,
-		Location:           c.Location,
-		MoneyRaised:        c.MoneyRaised,
-		TargetAmount:       c.TargetAmount,
-		TargetAmountPerKm:  c.TargetAmountPerKm,
-		DistanceToCover:    c.DistanceToCover,
-		DistanceCovered:    c.DistanceCovered,
-		StartDuration:      c.StartDuration,
-		EndDuration:        c.EndDuration,
-		Members:            members,
-		Sponsors:           sponsors,
-		OwnerID:            c.OwnerID,
-		Slug:               c.Slug,
-		WorkoutImg:         c.WorkoutImg,
+		Name:              c.Name,
+		Description:       c.Description,
+		Condition:         c.Condition,
+		Mode:              campaignModel.CampaignMode(c.Mode),
+		Goal:              c.Goal,
+		Activity:          campaignModel.Activity(c.Activity),
+		AcceptTac:         c.AcceptTac,
+		Location:          c.Location,
+		MoneyRaised:       c.MoneyRaised,
+		TargetAmount:      c.TargetAmount,
+		TargetAmountPerKm: c.TargetAmountPerKm,
+		DistanceToCover:   c.DistanceToCover,
+		DistanceCovered:   c.DistanceCovered,
+		StartDuration:     c.StartDuration,
+		EndDuration:       c.EndDuration,
+		Members:           members,
+		Sponsors:          sponsors,
+		OwnerID:           c.OwnerID,
+		Slug:              c.Slug,
+		WorkoutImg:        c.WorkoutImg,
 	}
 }
 

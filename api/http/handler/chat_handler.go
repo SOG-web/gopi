@@ -305,8 +305,9 @@ func (h *ChatHandler) JoinGroup(c *gin.Context) {
 	}
 
 	// Check if user is already a member
+	userIDStr := userID.(string)
 	for _, memberID := range group.MemberIDs {
-		if memberID == userID.(string) {
+		if memberID == userIDStr {
 			c.JSON(http.StatusBadRequest, dto.GroupMemberResponse{
 				Message: "You are already a member of " + group.Name + " group",
 				Success: false,
@@ -315,7 +316,7 @@ func (h *ChatHandler) JoinGroup(c *gin.Context) {
 		}
 	}
 
-	err = h.chatService.AddMemberToGroup(group.ID, userID.(string), userID.(string))
+	err = h.chatService.AddMemberToGroup(group.ID, userIDStr, userIDStr)
 	if err != nil {
 		respondError(c, apperr.E("JoinGroup", apperr.Internal, err, "Failed to join group"))
 		return

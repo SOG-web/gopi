@@ -50,7 +50,7 @@ func RegisterPostRoutes(router *gin.Engine, postService *postApp.Service, jwtSer
 	commentsAuth.Use(middleware.RequireAuth(jwtService))
 	{
 		commentsAuth.POST("", postHandler.CreateComment)
-		commentsAuth.PUT("/:id", postHandler.UpdateComment)
-		commentsAuth.DELETE("/:id", postHandler.DeleteComment)
+		commentsAuth.PUT("/:commentID", postHandler.UpdateComment)
+		commentsAuth.DELETE("/:commentID", postHandler.DeleteComment)
 	}
 }
