@@ -9,7 +9,7 @@ import (
 	"gopi.com/internal/lib/jwt"
 )
 
-func RegisterChallengeRoutes(router *gin.Engine, challengeService *challenge.ChallengeService, userService *user.UserService, jwtService *jwt.JWTService) {
+func RegisterChallengeRoutes(router *gin.Engine, challengeService *challenge.ChallengeService, userService *user.UserService, jwtService jwt.JWTServiceInterface) {
 	challengeHandler := handler.NewChallengeHandler(challengeService, userService)
 
 	api := router.Group("/api/v1")
@@ -20,13 +20,13 @@ func RegisterChallengeRoutes(router *gin.Engine, challengeService *challenge.Cha
 		challenges.GET("", challengeHandler.GetChallenges)
 		challenges.GET("/slug/:slug", challengeHandler.GetChallengeBySlug)
 		challenges.GET("/leaderboard", challengeHandler.GetLeaderboard)
-		
+
 		// Challenge-specific cause routes
 		challenges.GET("/:challenge_id/causes", challengeHandler.GetCausesByChallenge)
 		challenges.GET("/id/:id", challengeHandler.GetChallengeByID)
 
 	}
-	
+
 	// Protected challenge routes
 	protectedChallenges := api.Group("/challenges")
 	protectedChallenges.Use(middleware.RequireAuth(jwtService))
@@ -41,7 +41,7 @@ func RegisterChallengeRoutes(router *gin.Engine, challengeService *challenge.Cha
 	{
 		causes.GET("/:id", challengeHandler.GetCauseByID)
 	}
-	
+
 	// Protected cause routes
 	protectedCauses := api.Group("/causes")
 	protectedCauses.Use(middleware.RequireAuth(jwtService))

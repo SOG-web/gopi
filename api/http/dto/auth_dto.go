@@ -108,8 +108,8 @@ type UpdateUserRequest struct {
 	Username  string  `json:"username,omitempty"`
 	FirstName string  `json:"first_name,omitempty"`
 	LastName  string  `json:"last_name,omitempty"`
-	Height    float64 `json:"height,omitempty"`
-	Weight    float64 `json:"weight,omitempty"`
+	Height    float64 `json:"height,omitempty" binding:"min=0"`
+	Weight    float64 `json:"weight,omitempty" binding:"min=0"`
 }
 
 type UpdateUserResponse struct {

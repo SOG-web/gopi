@@ -10,7 +10,7 @@ import (
 	"gopi.com/internal/lib/jwt"
 )
 
-func RegisterChatRoutes(router *gin.Engine, chatService *chat.ChatService, userService *user.UserService, jwtService *jwt.JWTService) {
+func RegisterChatRoutes(router *gin.Engine, chatService *chat.ChatService, userService *user.UserService, jwtService jwt.JWTServiceInterface) {
 	chatHandler := handler.NewChatHandler(chatService, userService)
 
 	// WebSocket setup

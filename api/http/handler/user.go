@@ -182,7 +182,15 @@ func (h *UserHandler) GetAllUsers(c *gin.Context) {
 
 	// Check if user is admin
 	currentUser, err := h.userService.GetUserByID(userID)
-	if err != nil || !currentUser.IsStaff {
+	if err != nil {
+		c.JSON(http.StatusNotFound, dto.AuthErrorResponse{
+			Error:      "User not found",
+			Success:    false,
+			StatusCode: http.StatusNotFound,
+		})
+		return
+	}
+	if !currentUser.IsStaff {
 		c.JSON(http.StatusForbidden, dto.AuthErrorResponse{
 			Error:      "Access denied",
 			Success:    false,
@@ -452,22 +460,22 @@ func (h *UserHandler) GetUserByID(c *gin.Context) {
 
 // Helper function to convert user model to DTO
 func (h *UserHandler) userModelToDTO(user *userModel.User) *dto.UserData {
-    return &dto.UserData{
-        ID:          user.ID,
-        Username:    user.Username,
-        Email:       user.Email,
-        FirstName:   user.FirstName,
-        LastName:    user.LastName,
-        Height:      user.Height,
-        Weight:      user.Weight,
-        IsStaff:     user.IsStaff,
-        IsActive:    user.IsActive,
-        IsSuperuser: user.IsSuperuser,
-        IsVerified:  user.IsVerified,
-        DateJoined:  user.DateJoined,
-        LastLogin:   user.LastLogin,
-        CreatedAt:   user.CreatedAt,
-        UpdatedAt:   user.UpdatedAt,
-        ProfileImageURL: user.ProfileImageURL,
-    }
+	return &dto.UserData{
+		ID:              user.ID,
+		Username:        user.Username,
+		Email:           user.Email,
+		FirstName:       user.FirstName,
+		LastName:        user.LastName,
+		Height:          user.Height,
+		Weight:          user.Weight,
+		IsStaff:         user.IsStaff,
+		IsActive:        user.IsActive,
+		IsSuperuser:     user.IsSuperuser,
+		IsVerified:      user.IsVerified,
+		DateJoined:      user.DateJoined,
+		LastLogin:       user.LastLogin,
+		CreatedAt:       user.CreatedAt,
+		UpdatedAt:       user.UpdatedAt,
+		ProfileImageURL: user.ProfileImageURL,
+	}
 }

@@ -43,10 +43,13 @@ import (
 	"gopi.com/internal/db"
 	"gopi.com/internal/lib/email"
 	"gopi.com/internal/lib/jwt"
+	jwtGorm "gopi.com/internal/lib/jwt"
 	"gopi.com/internal/lib/pwreset"
+	pwresetGorm "gopi.com/internal/lib/pwreset"
 	"gopi.com/internal/lib/storage"
 	"gopi.com/internal/logger"
 	"gopi.com/internal/server"
+	"gorm.io/gorm"
 )
 
 func main() {
@@ -60,7 +63,13 @@ func main() {
 	docs.SwaggerInfo.BasePath = "/v1"
 
 	slog.Info("creating db", "cfg", cfg)
-	gdb, err := db.NewSqliteDb(cfg)
+	var gdb *gorm.DB
+	var err error
+	if cfg.DBDriver == "sqlite" {
+		gdb, err = db.NewSqliteDb(cfg)
+	} else {
+		gdb, err = db.NewMysqlDb(cfg)
+	}
 	if err != nil {
 		slog.Error("db error", "err", err)
 		return
@@ -125,6 +134,24 @@ func main() {
 		return
 	}
 
+	// JWT and Password Reset models (only if using database implementations)
+	if cfg.UseDatabaseJWT || cfg.UseDatabasePWReset {
+		serviceModels := []interface{}{}
+		if cfg.UseDatabaseJWT {
+			serviceModels = append(serviceModels, &jwtGorm.BlacklistedToken{})
+		}
+		if cfg.UseDatabasePWReset {
+			serviceModels = append(serviceModels, &pwresetGorm.PasswordResetToken{})
+		}
+		if len(serviceModels) > 0 {
+			if err := gdb.AutoMigrate(serviceModels...); err != nil {
+				slog.Error("service models migrate error", "err", err)
+				return
+			}
+			slog.Info("service models migrated")
+		}
+	}
+
 	slog.Info("db migrated")
 
 	slog.Info("creating services")
@@ -138,25 +165,34 @@ func main() {
 	}
 	emailService := email.NewEmailService(emailConfig)
 
-	// Redis configuration
-	slog.Info("connecting to redis")
-	redisClient := redis.NewClient(&redis.Options{
-		Addr:     cfg.RedisAddr,
-		Password: cfg.RedisPassword,
-		DB:       cfg.RedisDB,
-	})
+	// Redis configuration (only if needed)
+	var redisClient *redis.Client
+	if !cfg.UseDatabaseJWT || !cfg.UseDatabasePWReset {
+		slog.Info("connecting to redis")
+		redisClient = redis.NewClient(&redis.Options{
+			Addr:     cfg.RedisAddr,
+			Password: cfg.RedisPassword,
+			DB:       cfg.RedisDB,
+		})
+		slog.Info("redis connected")
+	}
 
-	// JWT service configuration
-	jwtService := jwt.NewJWTService(
+	// JWT service configuration (using factory)
+	jwtService := jwt.NewJWTServiceFactory(
 		cfg.JWTSecret,
 		24*time.Hour,  // Access token expiry
 		720*time.Hour, // Refresh token expiry (30 days)
-		redisClient,   // Redis client for token blacklisting
+		redisClient,   // Redis client for token blacklisting (nil if using database)
+		gdb,           // Database connection
 	)
-	slog.Info("redis connected and jwt service created")
+	slog.Info("jwt service created")
 
-	// Password reset service (1 hour TTL)
-	pwResetService := pwreset.NewService(redisClient, time.Hour)
+	// Password reset service (using factory)
+	pwResetService := pwreset.NewPasswordResetServiceFactory(
+		redisClient, // Redis client (nil if using database)
+		gdb,         // Database connection
+		time.Hour,   // TTL
+	)
 
 	slog.Info("creating repos")
 	userRepo := dataRepo.NewGormUserRepository(gdb)
@@ -216,15 +252,15 @@ func main() {
 
 	slog.Info("creating server")
 	deps := router.Dependencies{
-		JWTService:       jwtService,
-		UserService:      userSvc,
-		CampaignService:  campaignSvc,
-		ChallengeService: challengeSvc,
-		ChatService:      chatSvc,
-		PostService:      postSvc,
-		RedisClient:      redisClient,
-		SessionMW:        nil, // We'll use JWT instead of sessions
-		Storage:          store,
+		JWTService:           jwtService,
+		UserService:          userSvc,
+		CampaignService:      campaignSvc,
+		ChallengeService:     challengeSvc,
+		ChatService:          chatSvc,
+		PostService:          postSvc,
+		RedisClient:          redisClient,
+		SessionMW:            nil, // We'll use JWT instead of sessions
+		Storage:              store,
 		PasswordResetService: pwResetService,
 		EmailService:         emailService,
 		PublicHost:           cfg.PublicHost,

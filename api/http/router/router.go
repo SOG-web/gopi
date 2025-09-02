@@ -13,23 +13,23 @@ import (
 	"gopi.com/internal/app/chat"
 	"gopi.com/internal/app/post"
 	"gopi.com/internal/app/user"
-	"gopi.com/internal/lib/jwt"
-	"gopi.com/internal/lib/storage"
-	"gopi.com/internal/lib/pwreset"
 	"gopi.com/internal/lib/email"
+	"gopi.com/internal/lib/jwt"
+	"gopi.com/internal/lib/pwreset"
+	"gopi.com/internal/lib/storage"
 )
 
 type Dependencies struct {
-	SessionMW        gin.HandlerFunc
-	JWTService       *jwt.JWTService
-	UserService      *user.UserService
-	CampaignService  *campaign.CampaignService
-	ChallengeService *challenge.ChallengeService
-	ChatService      *chat.ChatService
-	PostService      *post.Service
-	RedisClient      *redis.Client
-	Storage          storage.Storage
-	PasswordResetService *pwreset.Service
+	SessionMW            gin.HandlerFunc
+	JWTService           jwt.JWTServiceInterface
+	UserService          *user.UserService
+	CampaignService      *campaign.CampaignService
+	ChallengeService     *challenge.ChallengeService
+	ChatService          *chat.ChatService
+	PostService          *post.Service
+	RedisClient          *redis.Client
+	Storage              storage.Storage
+	PasswordResetService pwreset.PasswordResetServiceInterface
 	EmailService         *email.EmailService
 	PublicHost           string
 }

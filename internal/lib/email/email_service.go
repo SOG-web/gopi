@@ -16,7 +16,7 @@ type EmailService struct {
 	username string
 	password string
 	from     string
-	
+
 	// Email queue for async processing
 	emailQueue chan EmailRequest
 	wg         *sync.WaitGroup
@@ -31,15 +31,26 @@ type EmailConfig struct {
 }
 
 type EmailRequest struct {
-	To       []string
-	Subject  string
-	Body     string
-	IsHTML   bool
+	To      []string
+	Subject string
+	Body    string
+	IsHTML  bool
 }
 
 type OTPEmailData struct {
 	Name string
 	OTP  string
+}
+
+// EmailServiceInterface defines the interface for email operations
+type EmailServiceInterface interface {
+	SendOTPEmail(email, firstName, otp string) error
+	SendWelcomeEmail(email, firstName string) error
+	SendPasswordResetEmail(email, resetLink string) error
+	SendApologyEmail(email, username string) error
+	SendBulkEmail(emails []string, subject, htmlContent string) error
+	TestEmailConnection() error
+	GetQueueLength() int
 }
 
 func NewEmailService(config EmailConfig) *EmailService {
@@ -52,10 +63,10 @@ func NewEmailService(config EmailConfig) *EmailService {
 		emailQueue: make(chan EmailRequest, 100), // Buffer of 100 emails
 		wg:         &sync.WaitGroup{},
 	}
-	
+
 	// Start the email worker goroutine (equivalent to Django's EmailThread)
 	go service.emailWorker()
-	
+
 	return service
 }
 
@@ -65,13 +76,13 @@ func (e *EmailService) emailWorker() {
 		e.wg.Add(1)
 		go func(req EmailRequest) {
 			defer e.wg.Done()
-			
+
 			// Create email message
 			m := gomail.NewMessage()
 			m.SetHeader("From", e.from)
 			m.SetHeader("To", req.To...)
 			m.SetHeader("Subject", req.Subject)
-			
+
 			if req.IsHTML {
 				m.SetBody("text/html", req.Body)
 			} else {
@@ -80,7 +91,7 @@ func (e *EmailService) emailWorker() {
 
 			// Create dialer and send
 			d := gomail.NewDialer(e.host, e.port, e.username, e.password)
-			
+
 			if err := d.DialAndSend(m); err != nil {
 				// Log error but don't fail the application
 				log.Printf("Failed to send email to %v: %v", req.To, err)
@@ -254,7 +265,7 @@ func (e *EmailService) sendEmailSync(req EmailRequest) error {
 	m.SetHeader("From", e.from)
 	m.SetHeader("To", req.To...)
 	m.SetHeader("Subject", req.Subject)
-	
+
 	if req.IsHTML {
 		m.SetBody("text/html", req.Body)
 	} else {
@@ -311,13 +322,13 @@ func (e *EmailService) generateOTPHTML(data OTPEmailData) (string, error) {
 // TestEmailConnection tests the email service configuration
 func (e *EmailService) TestEmailConnection() error {
 	d := gomail.NewDialer(e.host, e.port, e.username, e.password)
-	
+
 	closer, err := d.Dial()
 	if err != nil {
 		return fmt.Errorf("failed to connect to email server: %v", err)
 	}
 	defer closer.Close()
-	
+
 	return nil
 }
 
@@ -342,7 +353,7 @@ func (e *EmailService) SendBulkEmail(emails []string, subject, htmlContent strin
 			}
 		}
 	}
-	
+
 	return nil
 }
 

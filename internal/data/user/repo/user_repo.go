@@ -56,6 +56,13 @@ func (r *UserRepositoryGORM) GetByUsername(username string) (*userModel.User, er
 }
 
 func (r *UserRepositoryGORM) Update(user *userModel.User) error {
+	// Check if user exists first
+	var existingUser userGORM.UserGORM
+	err := r.db.First(&existingUser, "id = ?", user.ID).Error
+	if err != nil {
+		return err // Return error if user doesn't exist
+	}
+
 	userGORMModel := userGORM.UserModelToGORM(user)
 	return r.db.Save(userGORMModel).Error
 }

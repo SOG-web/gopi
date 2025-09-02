@@ -18,10 +18,10 @@ import (
 
 type UserService struct {
 	userRepo     repo.UserRepository
-	emailService *email.EmailService
+	emailService email.EmailServiceInterface
 }
 
-func NewUserService(userRepo repo.UserRepository, emailService *email.EmailService) *UserService {
+func NewUserService(userRepo repo.UserRepository, emailService email.EmailServiceInterface) *UserService {
 	return &UserService{
 		userRepo:     userRepo,
 		emailService: emailService,

@@ -22,14 +22,15 @@ type Config struct {
 	LogToFile bool
 	RunMode   string
 
-    SessionSecret string
-    SessionName   string
-    SessionSecure bool
-    SessionDomain string
-    SessionMaxAge int
+	SessionSecret string
+	SessionName   string
+	SessionSecure bool
+	SessionDomain string
+	SessionMaxAge int
 
 	// JWT Configuration
-	JWTSecret string
+	JWTSecret      string
+	UseDatabaseJWT bool
 
 	// Email Configuration
 	EmailHost     string
@@ -43,20 +44,23 @@ type Config struct {
 	RedisPassword string
 	RedisDB       int
 
-    // Storage Configuration
-    StorageBackend      string // local or s3
-    UploadBaseDir       string // e.g. ./uploads
-    UploadPublicBaseURL string // e.g. /uploads
+	// Password Reset Configuration
+	UseDatabasePWReset bool
 
-    // S3 Configuration
-    S3Endpoint        string
-    S3Region          string
-    S3Bucket          string
-    S3AccessKeyID     string
-    S3SecretAccessKey string
-    S3UseSSL          bool
-    S3ForcePathStyle  bool
-    S3PublicBaseURL   string
+	// Storage Configuration
+	StorageBackend      string // local or s3
+	UploadBaseDir       string // e.g. ./uploads
+	UploadPublicBaseURL string // e.g. /uploads
+
+	// S3 Configuration
+	S3Endpoint        string
+	S3Region          string
+	S3Bucket          string
+	S3AccessKeyID     string
+	S3SecretAccessKey string
+	S3UseSSL          bool
+	S3ForcePathStyle  bool
+	S3PublicBaseURL   string
 }
 
 var Envs = initConfig()
@@ -78,14 +82,15 @@ func initConfig() Config {
 		LogToFile: getEnvBool("LOG_FILE_ENABLED", false),
 		RunMode:   getEnv("GIN_MODE", "debug"),
 
-        SessionSecret: getEnv("SESSION_SECRET", "dev-secret-change-me"),
-        SessionName:   getEnv("SESSION_NAME", "hor_session"),
-        SessionSecure: getEnvBool("SESSION_SECURE", false),
-        SessionDomain: getEnv("SESSION_DOMAIN", ""),
-        SessionMaxAge: getEnvInt("SESSION_MAX_AGE", 86400),
+		SessionSecret: getEnv("SESSION_SECRET", "dev-secret-change-me"),
+		SessionName:   getEnv("SESSION_NAME", "hor_session"),
+		SessionSecure: getEnvBool("SESSION_SECURE", false),
+		SessionDomain: getEnv("SESSION_DOMAIN", ""),
+		SessionMaxAge: getEnvInt("SESSION_MAX_AGE", 86400),
 
 		// JWT Configuration
-		JWTSecret: getEnv("JWT_SECRET", "dev-jwt-secret-change-me-in-production"),
+		JWTSecret:      getEnv("JWT_SECRET", "dev-jwt-secret-change-me-in-production"),
+		UseDatabaseJWT: getEnvBool("USE_DATABASE_JWT", false),
 
 		// Email Configuration
 		EmailHost:     getEnv("EMAIL_HOST", "smtp.gmail.com"),
@@ -99,20 +104,23 @@ func initConfig() Config {
 		RedisPassword: getEnv("REDIS_PASSWORD", ""),
 		RedisDB:       getEnvInt("REDIS_DB", 0),
 
-        // Storage Configuration
-        StorageBackend:      getEnv("STORAGE_BACKEND", "local"),
-        UploadBaseDir:       getEnv("UPLOAD_BASE_DIR", "./uploads"),
-        UploadPublicBaseURL: getEnv("UPLOAD_PUBLIC_BASE_URL", "/uploads"),
+		// Password Reset Configuration
+		UseDatabasePWReset: getEnvBool("USE_DATABASE_PWRESET", false),
 
-        // S3 Configuration
-        S3Endpoint:        getEnv("S3_ENDPOINT", ""),
-        S3Region:          getEnv("S3_REGION", "us-east-1"),
-        S3Bucket:          getEnv("S3_BUCKET", ""),
-        S3AccessKeyID:     getEnv("S3_ACCESS_KEY_ID", ""),
-        S3SecretAccessKey: getEnv("S3_SECRET_ACCESS_KEY", ""),
-        S3UseSSL:          getEnvBool("S3_USE_SSL", true),
-        S3ForcePathStyle:  getEnvBool("S3_FORCE_PATH_STYLE", false),
-        S3PublicBaseURL:   getEnv("S3_PUBLIC_BASE_URL", ""),
+		// Storage Configuration
+		StorageBackend:      getEnv("STORAGE_BACKEND", "local"),
+		UploadBaseDir:       getEnv("UPLOAD_BASE_DIR", "./uploads"),
+		UploadPublicBaseURL: getEnv("UPLOAD_PUBLIC_BASE_URL", "/uploads"),
+
+		// S3 Configuration
+		S3Endpoint:        getEnv("S3_ENDPOINT", ""),
+		S3Region:          getEnv("S3_REGION", "us-east-1"),
+		S3Bucket:          getEnv("S3_BUCKET", ""),
+		S3AccessKeyID:     getEnv("S3_ACCESS_KEY_ID", ""),
+		S3SecretAccessKey: getEnv("S3_SECRET_ACCESS_KEY", ""),
+		S3UseSSL:          getEnvBool("S3_USE_SSL", true),
+		S3ForcePathStyle:  getEnvBool("S3_FORCE_PATH_STYLE", false),
+		S3PublicBaseURL:   getEnv("S3_PUBLIC_BASE_URL", ""),
 	}
 }
 
@@ -138,12 +146,12 @@ func getEnvBool(key string, fallback bool) bool {
 }
 
 func getEnvInt(key string, fallback int) int {
-    if value, ok := os.LookupEnv(key); ok {
-        var n int
-        _, err := fmt.Sscan(value, &n)
-        if err == nil {
-            return n
-        }
-    }
-    return fallback
+	if value, ok := os.LookupEnv(key); ok {
+		var n int
+		_, err := fmt.Sscan(value, &n)
+		if err == nil {
+			return n
+		}
+	}
+	return fallback
 }

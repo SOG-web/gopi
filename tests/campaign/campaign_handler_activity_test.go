@@ -262,9 +262,9 @@ func TestCampaignHandler_FinishCampaignRun(t *testing.T) {
 				mockRunnerRepo.On("GetByID", "runner123").Return(expectedRunner, nil)
 				mockRunnerRepo.On("Update", mock.MatchedBy(func(r *campaignModel.CampaignRunner) bool {
 					return r.ID == "runner123" &&
-						r.DistanceCovered == 10.5 &&
+						r.DistanceCovered == 15.5 && // 5.0 (existing) + 10.5 (new) = 15.5
 						r.Duration == "35:20" &&
-						r.MoneyRaised == 15.0
+						r.MoneyRaised == 25.0 // 10.0 (existing) + 15.0 (new) = 25.0
 				})).Return(nil)
 				mockCampaignRepo.On("Update", mock.MatchedBy(func(c *campaignModel.Campaign) bool {
 					return c.ID == "campaign123" &&
@@ -330,9 +330,9 @@ func TestCampaignHandler_FinishCampaignRun(t *testing.T) {
 				mockRunnerRepo.On("GetByID", "runner123").Return(expectedRunner, nil)
 				mockRunnerRepo.On("Update", mock.MatchedBy(func(r *campaignModel.CampaignRunner) bool {
 					return r.ID == "runner123" &&
-						r.DistanceCovered == 8.0 &&
+						r.DistanceCovered == 11.0 && // 3.0 (existing) + 8.0 (new) = 11.0
 						r.Duration == "28:15" &&
-						r.MoneyRaised == 0
+						r.MoneyRaised == 0 // 0 (existing) + 0 (new) = 0
 				})).Return(nil)
 				mockCampaignRepo.On("Update", mock.MatchedBy(func(c *campaignModel.Campaign) bool {
 					return c.ID == "campaign123" &&

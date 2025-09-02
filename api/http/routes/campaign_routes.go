@@ -9,7 +9,7 @@ import (
 	"gopi.com/internal/lib/jwt"
 )
 
-func RegisterCampaignRoutes(router *gin.Engine, campaignService *campaign.CampaignService, userService *user.UserService, jwtService *jwt.JWTService) {
+func RegisterCampaignRoutes(router *gin.Engine, campaignService *campaign.CampaignService, userService *user.UserService, jwtService jwt.JWTServiceInterface) {
 	campaignHandler := handler.NewCampaignHandler(campaignService, userService)
 	campaignAdminHandler := handler.NewCampaignAdminHandler(campaignService, userService)
 

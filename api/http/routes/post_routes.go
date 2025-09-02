@@ -9,7 +9,7 @@ import (
 	"gopi.com/internal/lib/storage"
 )
 
-func RegisterPostRoutes(router *gin.Engine, postService *postApp.Service, jwtService *jwt.JWTService, st storage.Storage) {
+func RegisterPostRoutes(router *gin.Engine, postService *postApp.Service, jwtService jwt.JWTServiceInterface, st storage.Storage) {
 	postHandler := handler.NewPostHandler(postService, st)
 
 	// Public post routes

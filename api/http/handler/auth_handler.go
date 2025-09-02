@@ -12,10 +12,10 @@ import (
 
 type AuthHandler struct {
 	userService *userService.UserService
-	jwtService  *jwt.JWTService
+	jwtService  jwt.JWTServiceInterface
 }
 
-func NewAuthHandler(userService *userService.UserService, jwtService *jwt.JWTService) *AuthHandler {
+func NewAuthHandler(userService *userService.UserService, jwtService jwt.JWTServiceInterface) *AuthHandler {
 	return &AuthHandler{
 		userService: userService,
 		jwtService:  jwtService,
@@ -36,7 +36,7 @@ func NewAuthHandler(userService *userService.UserService, jwtService *jwt.JWTSer
 // @Router /api/auth/register [post]
 func (h *AuthHandler) UserRegister(c *gin.Context) {
 	var req dto.RegistrationRequest
-	
+
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, dto.RegistrationResponse{
 			Response:     "Error",
@@ -225,7 +225,7 @@ func (h *AuthHandler) UserLogout(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization")
 	if authHeader != "" && len(authHeader) > 7 && authHeader[:7] == "Bearer " {
 		tokenString := authHeader[7:]
-		
+
 		// Add the token to blacklist
 		err := h.jwtService.BlacklistToken(tokenString)
 		if err != nil {

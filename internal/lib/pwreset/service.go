@@ -6,9 +6,11 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/redis/go-redis/v9"
+	"gorm.io/gorm"
 )
 
 // Service manages password reset tokens using Redis with expiry and single-use semantics.
@@ -74,4 +76,23 @@ func randomToken(n int) (string, error) {
 	}
 	// URL-safe base64 without padding
 	return base64.RawURLEncoding.EncodeToString(b), nil
+}
+
+// PasswordResetServiceInterface defines the interface for password reset operations
+type PasswordResetServiceInterface interface {
+	GenerateToken(ctx context.Context, userID string) (string, error)
+	ValidateToken(ctx context.Context, token string) (string, error)
+	ConsumeToken(ctx context.Context, token string) error
+}
+
+// NewPasswordResetServiceFactory creates password reset service based on environment configuration
+func NewPasswordResetServiceFactory(redisClient *redis.Client, db *gorm.DB, ttl time.Duration) PasswordResetServiceInterface {
+	// Check environment variable to choose implementation
+	useDatabase := os.Getenv("USE_DATABASE_PWRESET") == "true"
+
+	if useDatabase {
+		return NewDatabaseService(db, ttl)
+	}
+
+	return NewService(redisClient, ttl)
 }

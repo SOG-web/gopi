@@ -10,7 +10,7 @@ import (
 )
 
 // RequireAuth ensures a user is signed in using JWT token
-func RequireAuth(jwtService *jwt.JWTService) gin.HandlerFunc {
+func RequireAuth(jwtService jwt.JWTServiceInterface) gin.HandlerFunc {
 	return gin.HandlerFunc(func(c *gin.Context) {
 		// Get token from Authorization header
 		authHeader := c.GetHeader("Authorization")
@@ -104,7 +104,7 @@ func RequireRole(role string) gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "forbidden"})
 			return
 		}
-		
+
 		switch role {
 		case "staff":
 			if !isStaff.(bool) {
@@ -121,7 +121,7 @@ func RequireRole(role string) gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "unknown role"})
 			return
 		}
-		
+
 		c.Next()
 	}
 }
