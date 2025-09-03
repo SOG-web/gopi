@@ -329,7 +329,7 @@ func (s *UserService) GetUserList(limit, offset int) ([]*userModel.User, error) 
 func (s *UserService) SendBulkEmail(userIDs []string, subject, content string) error {
 	var emails []string
 	var names []string
-	
+
 	for _, userID := range userIDs {
 		user, err := s.userRepo.GetByID(userID)
 		if err != nil {
@@ -338,11 +338,11 @@ func (s *UserService) SendBulkEmail(userIDs []string, subject, content string) e
 		emails = append(emails, user.Email)
 		names = append(names, user.FirstName)
 	}
-	
+
 	if s.emailService != nil {
 		return s.emailService.SendBulkEmail(emails, subject, content)
 	}
-	
+
 	return nil
 }
 
@@ -361,14 +361,14 @@ func (s *UserService) SendApologyEmails(users []map[string]string) error {
 		if !ok {
 			continue
 		}
-		
+
 		err := s.emailService.SendApologyEmail(email, username)
 		if err != nil {
 			// Log error but continue with other emails
 			fmt.Printf("Failed to send apology email to %s: %v\n", email, err)
 		}
 	}
-	
+
 	return nil
 }
 
@@ -378,10 +378,10 @@ func (s *UserService) ActivateUser(userID string) error {
 	if err != nil {
 		return err
 	}
-	
+
 	user.IsActive = true
 	user.UpdatedAt = time.Now()
-	
+
 	return s.userRepo.Update(user)
 }
 
@@ -391,10 +391,10 @@ func (s *UserService) DeactivateUser(userID string) error {
 	if err != nil {
 		return err
 	}
-	
+
 	user.IsActive = false
 	user.UpdatedAt = time.Now()
-	
+
 	return s.userRepo.Update(user)
 }
 
@@ -404,10 +404,10 @@ func (s *UserService) MakeStaff(userID string) error {
 	if err != nil {
 		return err
 	}
-	
+
 	user.IsStaff = true
 	user.UpdatedAt = time.Now()
-	
+
 	return s.userRepo.Update(user)
 }
 
@@ -417,11 +417,11 @@ func (s *UserService) RemoveStaff(userID string) error {
 	if err != nil {
 		return err
 	}
-	
+
 	user.IsStaff = false
 	user.IsSuperuser = false // Remove superuser as well
 	user.UpdatedAt = time.Now()
-	
+
 	return s.userRepo.Update(user)
 }
 
@@ -431,17 +431,17 @@ func (s *UserService) GetUserStats() (map[string]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	verifiedUsers, err := s.userRepo.GetVerifiedUsers()
 	if err != nil {
 		return nil, err
 	}
-	
+
 	staffUsers, err := s.userRepo.GetStaffUsers()
 	if err != nil {
 		return nil, err
 	}
-	
+
 	stats := map[string]interface{}{
 		"total_users":      len(allUsers),
 		"verified_users":   len(verifiedUsers),
@@ -449,7 +449,7 @@ func (s *UserService) GetUserStats() (map[string]interface{}, error) {
 		"staff_users":      len(staffUsers),
 		"active_users":     0, // Will be calculated below
 	}
-	
+
 	// Count active users
 	activeCount := 0
 	for _, user := range allUsers {
@@ -458,7 +458,7 @@ func (s *UserService) GetUserStats() (map[string]interface{}, error) {
 		}
 	}
 	stats["active_users"] = activeCount
-	
+
 	return stats, nil
 }
 
@@ -470,30 +470,30 @@ func (s *UserService) SearchUsers(query string, limit, offset int) ([]*userModel
 	if err != nil {
 		return nil, err
 	}
-	
+
 	var filteredUsers []*userModel.User
 	query = strings.ToLower(query)
-	
+
 	for _, user := range allUsers {
 		if strings.Contains(strings.ToLower(user.Username), query) ||
-		   strings.Contains(strings.ToLower(user.Email), query) ||
-		   strings.Contains(strings.ToLower(user.FirstName), query) ||
-		   strings.Contains(strings.ToLower(user.LastName), query) {
+			strings.Contains(strings.ToLower(user.Email), query) ||
+			strings.Contains(strings.ToLower(user.FirstName), query) ||
+			strings.Contains(strings.ToLower(user.LastName), query) {
 			filteredUsers = append(filteredUsers, user)
 		}
 	}
-	
+
 	// Apply pagination
 	start := offset
 	if start > len(filteredUsers) {
 		return []*userModel.User{}, nil
 	}
-	
+
 	end := start + limit
 	if end > len(filteredUsers) {
 		end = len(filteredUsers)
 	}
-	
+
 	return filteredUsers[start:end], nil
 }
 
@@ -513,16 +513,16 @@ func (s *UserService) ForceVerifyUser(userID string) error {
 	if err != nil {
 		return err
 	}
-	
+
 	if user.IsVerified {
 		return errors.New("user is already verified")
 	}
-	
+
 	return s.userRepo.MarkAsVerified(user.ID)
 }
 
 // NewService creates a new UserService (compatibility function)
-func NewService(userRepo repo.UserRepository, emailService *email.EmailService) *UserService {
+func NewService(userRepo repo.UserRepository, emailService email.EmailServiceInterface) *UserService {
 	return NewUserService(userRepo, emailService)
 }
 

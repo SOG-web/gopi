@@ -38,6 +38,8 @@ type Config struct {
 	EmailUsername string
 	EmailPassword string
 	EmailFrom     string
+	UseLocalEmail bool
+	EmailLogPath  string
 
 	// Redis Configuration
 	RedisAddr     string
@@ -98,6 +100,8 @@ func initConfig() Config {
 		EmailUsername: getEnv("EMAIL_USERNAME", ""),
 		EmailPassword: getEnv("EMAIL_PASSWORD", ""),
 		EmailFrom:     getEnv("EMAIL_FROM", "noreply@gopadi.com"),
+		UseLocalEmail: getEnvBool("USE_LOCAL_EMAIL", true),
+		EmailLogPath:  getEnv("EMAIL_LOG_PATH", "./logs/emails.log"),
 
 		// Redis Configuration
 		RedisAddr:     getEnv("REDIS_ADDR", "localhost:6379"),

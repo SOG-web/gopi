@@ -153,23 +153,40 @@ func TestAuthHandler_UserRegister(t *testing.T) {
 			},
 			expectedStatus: http.StatusCreated,
 			mockSetup: func() {
+				// Create mock user that will be returned by RegisterUser
+				mockUser := &userModel.User{
+					Base: model.Base{
+						ID:        "test-user-id",
+						CreatedAt: time.Now(),
+						UpdatedAt: time.Now(),
+					},
+					Username:   "testuser",
+					Email:      "test@example.com",
+					FirstName:  "Test",
+					LastName:   "User",
+					Height:     175.0,
+					Weight:     70.0,
+					IsVerified: false,
+					DateJoined: time.Now(),
+				}
+
 				// Mock validation checks
 				mockUserRepo.On("EmailExists", "test@example.com").Return(false, nil)
 				mockUserRepo.On("UsernameExists", "testuser").Return(false, nil)
 
-				// Mock user creation
-				mockUserRepo.On("Create", mock.Anything).Return(nil)
+				// Mock user creation - return the mock user
+				mockUserRepo.On("Create", mock.Anything).Run(func(args mock.Arguments) {
+					// This will be called with the user created in RegisterUser
+				}).Return(nil)
 
-				// Mock email sending
+				// Mock GetByID for ResendOTP (called after user registration)
+				mockUserRepo.On("GetByID", mock.AnythingOfType("string")).Return(mockUser, nil)
+
+				// Mock UpdateOTP for ResendOTP
+				mockUserRepo.On("UpdateOTP", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(nil)
+
+				// Mock email sending (for initial registration and resend)
 				mockEmailService.On("SendOTPEmail", mock.Anything, mock.Anything, mock.Anything).Return(nil)
-
-				// Mock JWT token generation
-				expectedTokenPair := &jwt.TokenPair{
-					AccessToken:  "mock-access-token",
-					RefreshToken: "mock-refresh-token",
-					ExpiresIn:    3600,
-				}
-				mockJWTService.On("GenerateTokenPair", mock.Anything).Return(expectedTokenPair, nil)
 
 			},
 		},
@@ -251,27 +268,6 @@ func TestAuthHandler_UserRegister(t *testing.T) {
 				mockUserRepo.On("EmailExists", "test@example.com").Return(false, nil)
 				mockUserRepo.On("UsernameExists", "testuser").Return(false, nil)
 				mockUserRepo.On("Create", mock.Anything).Return(errors.New("repository error"))
-			},
-		},
-		{
-			name: "JWT token generation error",
-			requestBody: dto.RegistrationRequest{
-				Username:  "testuser",
-				Email:     "test@example.com",
-				FirstName: "Test",
-				LastName:  "User",
-				Password:  "password123",
-				Height:    175.0,
-				Weight:    70.0,
-			},
-			expectedStatus: http.StatusInternalServerError,
-			mockSetup: func() {
-				mockUserRepo.On("EmailExists", "test@example.com").Return(false, nil)
-				mockUserRepo.On("UsernameExists", "testuser").Return(false, nil)
-				mockUserRepo.On("Create", mock.Anything).Return(nil)
-				mockEmailService.On("SendOTPEmail", mock.Anything, mock.Anything, mock.Anything).Return(nil)
-				mockJWTService.On("GenerateTokenPair", mock.Anything).Return(nil, errors.New("JWT generation failed"))
-
 			},
 		},
 	}

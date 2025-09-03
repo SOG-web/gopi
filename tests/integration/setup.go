@@ -63,7 +63,7 @@ type TestServices struct {
 	ChatService      *chat.ChatService
 	PostService      *postApp.Service
 	JWTService       jwt.JWTServiceInterface
-	EmailService     *email.EmailService
+	EmailService     email.EmailServiceInterface
 	PwdResetService  pwreset.PasswordResetServiceInterface
 	StorageService   storage.Storage
 }
@@ -114,6 +114,8 @@ func SetupTestServer(t *testing.T) *TestServer {
 		UploadBaseDir:  "./test_uploads",
 		StorageBackend: "local",
 		PublicHost:     "http://localhost:8080",
+		UseLocalEmail:  true,                     // Use local email service for integration tests
+		EmailLogPath:   "./test_logs/emails.log", // Email log path for tests
 	}
 
 	// Initialize test database
@@ -182,14 +184,22 @@ func SetupTestServer(t *testing.T) *TestServer {
 	}
 
 	// Initialize services with test configurations
-	// Email service (will use test config that doesn't send actual emails)
-	emailService := email.NewEmailService(email.EmailConfig{
+	// Email service (using factory pattern - will use local email service for tests)
+	emailConfig := email.EmailConfig{
 		Host:     cfg.EmailHost,
 		Port:     cfg.EmailPort,
 		Username: cfg.EmailUsername,
 		Password: cfg.EmailPassword,
 		From:     cfg.EmailFrom,
-	})
+	}
+	emailService, err := email.NewEmailServiceFactory(
+		emailConfig,
+		cfg.UseLocalEmail,
+		cfg.EmailLogPath, // Configurable log file path for integration tests
+	)
+	if err != nil {
+		panic(err)
+	}
 
 	// JWT service (will use database for testing)
 	jwtService := jwt.NewJWTServiceFactory(
@@ -302,6 +312,7 @@ func (ts *TestServer) TearDownTestServer() {
 
 	// Clean up test files
 	os.RemoveAll("./test_uploads")
+	os.RemoveAll("./test_logs")
 }
 
 // CleanDB cleans up the database between tests

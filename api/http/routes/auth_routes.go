@@ -81,7 +81,7 @@ func SetupUserRoutes(router *gin.Engine, userSvc *userService.UserService, jwtSv
 }
 
 // SetupPasswordResetRoutes registers password reset request and confirm endpoints
-func SetupPasswordResetRoutes(router *gin.Engine, userSvc *userService.UserService, pwSvc pwreset.PasswordResetServiceInterface, emailSvc *email.EmailService, publicHost string) {
+func SetupPasswordResetRoutes(router *gin.Engine, userSvc *userService.UserService, pwSvc pwreset.PasswordResetServiceInterface, emailSvc email.EmailServiceInterface, publicHost string) {
 	if userSvc == nil || pwSvc == nil {
 		return
 	}

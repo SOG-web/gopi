@@ -1,0 +1,64 @@
+# Docker Environment Configuration for GoPadi
+# Copy this to .env when using Docker Compose
+
+# Server Configuration
+PUBLIC_HOST=http://localhost
+PORT=8080
+
+# Database Configuration (PostgreSQL via Docker)
+DB_DRIVER=postgres
+DB_HOST=db
+DB_PORT=5432
+DB_USER=gopi_user
+DB_PASSWORD=gopi_password
+DB_NAME=gopi_db
+
+# Redis Configuration (via Docker)
+REDIS_ADDR=redis:6379
+REDIS_PASSWORD=
+REDIS_DB=0
+
+# JWT Configuration
+JWT_SECRET=docker-jwt-secret-change-me-in-production-super-long-key-for-security
+USE_DATABASE_JWT=false
+
+# Email Configuration (Local for development)
+USE_LOCAL_EMAIL=true
+EMAIL_LOG_PATH=./logs/emails.log
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USERNAME=your-email@gmail.com
+EMAIL_PASSWORD=your-app-password
+EMAIL_FROM=noreply@gopadi.com
+
+# Password Reset Configuration
+USE_DATABASE_PWRESET=false
+
+# Logging Configuration
+LOG_LEVEL=info
+LOG_FILE=logs/app.log
+LOG_FILE_ENABLED=true
+GIN_MODE=debug
+
+# Session Configuration
+SESSION_SECRET=docker-session-secret-key
+SESSION_NAME=gopi_session
+SESSION_SECURE=false
+SESSION_DOMAIN=
+SESSION_MAX_AGE=86400
+
+# Storage Configuration
+STORAGE_BACKEND=local
+UPLOAD_BASE_DIR=./uploads
+UPLOAD_PUBLIC_BASE_URL=/uploads
+
+# S3 Configuration (optional)
+S3_ENDPOINT=
+S3_REGION=us-east-1
+S3_BUCKET=
+S3_ACCESS_KEY_ID=
+S3_ACCESS_KEY_ID=
+S3_SECRET_ACCESS_KEY=
+S3_USE_SSL=true
+S3_FORCE_PATH_STYLE=false
+S3_PUBLIC_BASE_URL=

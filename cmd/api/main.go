@@ -42,8 +42,7 @@ import (
 	dataRepo "gopi.com/internal/data/user/repo"
 	"gopi.com/internal/db"
 	"gopi.com/internal/lib/email"
-	"gopi.com/internal/lib/jwt"
-	jwtGorm "gopi.com/internal/lib/jwt"
+	jwtLib "gopi.com/internal/lib/jwt"
 	"gopi.com/internal/lib/pwreset"
 	pwresetGorm "gopi.com/internal/lib/pwreset"
 	"gopi.com/internal/lib/storage"
@@ -138,7 +137,7 @@ func main() {
 	if cfg.UseDatabaseJWT || cfg.UseDatabasePWReset {
 		serviceModels := []interface{}{}
 		if cfg.UseDatabaseJWT {
-			serviceModels = append(serviceModels, &jwtGorm.BlacklistedToken{})
+			serviceModels = append(serviceModels, &jwtLib.BlacklistedToken{})
 		}
 		if cfg.UseDatabasePWReset {
 			serviceModels = append(serviceModels, &pwresetGorm.PasswordResetToken{})
@@ -163,7 +162,24 @@ func main() {
 		Password: cfg.EmailPassword,
 		From:     cfg.EmailFrom,
 	}
-	emailService := email.NewEmailService(emailConfig)
+
+	// Email service (using factory pattern)
+	var emailService email.EmailServiceInterface
+	emailService, err = email.NewEmailServiceFactory(
+		emailConfig,
+		cfg.UseLocalEmail,
+		cfg.EmailLogPath, // Configurable log file path
+	)
+	if err != nil {
+		slog.Error("failed to create email service", "err", err)
+		return
+	}
+
+	if cfg.UseLocalEmail {
+		slog.Info("using local email service - emails will be logged to ./logs/emails.log")
+	} else {
+		slog.Info("using production email service")
+	}
 
 	// Redis configuration (only if needed)
 	var redisClient *redis.Client
@@ -178,7 +194,7 @@ func main() {
 	}
 
 	// JWT service configuration (using factory)
-	jwtService := jwt.NewJWTServiceFactory(
+	jwtService := jwtLib.NewJWTServiceFactory(
 		cfg.JWTSecret,
 		24*time.Hour,  // Access token expiry
 		720*time.Hour, // Refresh token expiry (30 days)
@@ -214,7 +230,7 @@ func main() {
 	commentRepo := postDataRepo.NewGormCommentRepository(gdb)
 	slog.Info("repos created")
 
-	userSvc := user.NewService(userRepo, emailService)
+	userSvc := user.NewUserService(userRepo, emailService)
 	campaignSvc := campaign.NewCampaignService(campaignRepo, campaignRunnerRepo, campaignSponRepo)
 	challengeSvc := challenge.NewChallengeService(challengeRepo, causeRepo, causeRunnerRepo, sponsorRepo, sponsorCauseRepo, causeBuyerRepo)
 	chatSvc := chat.NewChatService(groupRepo, messageRepo)

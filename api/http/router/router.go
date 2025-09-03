@@ -30,7 +30,7 @@ type Dependencies struct {
 	RedisClient          *redis.Client
 	Storage              storage.Storage
 	PasswordResetService pwreset.PasswordResetServiceInterface
-	EmailService         *email.EmailService
+	EmailService         email.EmailServiceInterface
 	PublicHost           string
 }
 

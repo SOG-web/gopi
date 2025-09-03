@@ -17,11 +17,11 @@ import (
 type PasswordResetHandler struct {
 	userService  *userService.UserService
 	pwService    pwreset.PasswordResetServiceInterface
-	emailService *email.EmailService
+	emailService email.EmailServiceInterface
 	publicHost   string
 }
 
-func NewPasswordResetHandler(userSvc *userService.UserService, pwSvc pwreset.PasswordResetServiceInterface, emailSvc *email.EmailService, publicHost string) *PasswordResetHandler {
+func NewPasswordResetHandler(userSvc *userService.UserService, pwSvc pwreset.PasswordResetServiceInterface, emailSvc email.EmailServiceInterface, publicHost string) *PasswordResetHandler {
 	return &PasswordResetHandler{
 		userService:  userSvc,
 		pwService:    pwSvc,

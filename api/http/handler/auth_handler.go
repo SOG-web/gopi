@@ -47,28 +47,6 @@ func (h *AuthHandler) UserRegister(c *gin.Context) {
 		return
 	}
 
-	// Validate email
-	if err := h.userService.ValidateEmail(req.Email); err != nil {
-		c.JSON(http.StatusBadRequest, dto.RegistrationResponse{
-			Response:     "Error",
-			Success:      false,
-			StatusCode:   http.StatusBadRequest,
-			ErrorMessage: err.Error(),
-		})
-		return
-	}
-
-	// Validate username
-	if err := h.userService.ValidateUsername(req.Username); err != nil {
-		c.JSON(http.StatusBadRequest, dto.RegistrationResponse{
-			Response:     "Error",
-			Success:      false,
-			StatusCode:   http.StatusBadRequest,
-			ErrorMessage: err.Error(),
-		})
-		return
-	}
-
 	// Create user
 	user, err := h.userService.RegisterUser(
 		req.Username,
@@ -89,17 +67,28 @@ func (h *AuthHandler) UserRegister(c *gin.Context) {
 		return
 	}
 
-	// Generate JWT token pair
-	tokenPair, err := h.jwtService.GenerateTokenPair(user)
-	if err != nil {
+	// Send OTP email
+	if err := h.userService.ResendOTP(user.ID); err != nil {
 		c.JSON(http.StatusInternalServerError, dto.RegistrationResponse{
 			Response:     "Error",
 			Success:      false,
 			StatusCode:   http.StatusInternalServerError,
-			ErrorMessage: "Failed to generate token",
+			ErrorMessage: "Failed to send OTP email",
 		})
 		return
 	}
+
+	// // Generate JWT token pair
+	// tokenPair, err := h.jwtService.GenerateTokenPair(user)
+	// if err != nil {
+	// 	c.JSON(http.StatusInternalServerError, dto.RegistrationResponse{
+	// 		Response:     "Error",
+	// 		Success:      false,
+	// 		StatusCode:   http.StatusInternalServerError,
+	// 		ErrorMessage: "Failed to generate token",
+	// 	})
+	// 	return
+	// }
 
 	userData := &dto.UserData{
 		ID:          user.ID,
@@ -125,7 +114,7 @@ func (h *AuthHandler) UserRegister(c *gin.Context) {
 		StatusCode: http.StatusCreated,
 		Data:       userData,
 		UserID:     user.ID,
-		Token:      tokenPair.AccessToken,
+		// Token:      tokenPair.AccessToken,
 		DateJoined: user.DateJoined,
 		IsVerified: user.IsVerified,
 	})

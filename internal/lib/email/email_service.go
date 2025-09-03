@@ -367,3 +367,14 @@ func (e *EmailService) Close() {
 func (e *EmailService) GetQueueLength() int {
 	return len(e.emailQueue)
 }
+
+// NewEmailServiceFactory creates email service based on environment configuration
+func NewEmailServiceFactory(config EmailConfig, useLocal bool, logFilePath string) (EmailServiceInterface, error) {
+	if useLocal {
+		// Use local email service for development - logs to file instead of sending emails
+		return NewLocalEmailService(logFilePath)
+	}
+
+	// Use production email service
+	return NewEmailService(config), nil
+}
