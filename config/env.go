@@ -77,7 +77,7 @@ func initConfig() Config {
 		DBUser:     getEnv("DB_USER", "root"),
 		DBPassword: getEnv("DB_PASSWORD", "password"),
 		DBName:     getEnv("DB_NAME", "ecomerce"),
-		DBAddress:  fmt.Sprintf("%s:%s", getEnv("DB_HOST", "127.0.0.1"), getEnv("DB_PORT", "3306")),
+		DBAddress:  getEnv("DB_ADDRESS", fmt.Sprintf("%s:%s", getEnv("DB_HOST", "127.0.0.1"), getEnv("DB_PORT", "3306"))),
 
 		LogLevel:  getEnv("LOG_LEVEL", "info"),
 		LogFile:   getEnv("LOG_FILE", "logs/app.log"),

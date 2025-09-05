@@ -6723,7 +6723,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "height": {
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0
                 },
                 "last_name": {
                     "type": "string"
@@ -6732,7 +6733,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "weight": {
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0
                 }
             }
         },

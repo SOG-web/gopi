@@ -13,14 +13,14 @@ func RegisterPostRoutes(router *gin.Engine, postService *postApp.Service, jwtSer
 	postHandler := handler.NewPostHandler(postService, st)
 
 	// Public post routes
-	public := router.Group("/posts")
+	public := router.Group("/api/posts")
 	{
 		public.GET("", postHandler.ListPublishedPosts)
 		public.GET("/:slug", postHandler.GetPostBySlug)
 	}
 
 	// Admin-only post routes
-	admin := router.Group("/posts/admin")
+	admin := router.Group("/api/posts/admin")
 	admin.Use(middleware.RequireAuth(jwtService))
 	admin.Use(middleware.RequireStaff())
 	{
@@ -31,7 +31,7 @@ func RegisterPostRoutes(router *gin.Engine, postService *postApp.Service, jwtSer
 	}
 
 	// Authenticated post routes (non-staff)
-	auth := router.Group("/posts")
+	auth := router.Group("/api/posts")
 	auth.Use(middleware.RequireAuth(jwtService))
 	{
 		auth.DELETE("/:id", postHandler.DeletePost)
@@ -39,14 +39,14 @@ func RegisterPostRoutes(router *gin.Engine, postService *postApp.Service, jwtSer
 	}
 
 	// Comments
-	comments := router.Group("/comments")
+	comments := router.Group("/api/comments")
 	{
 		// Public read
 		comments.GET("/:targetType/:targetID", postHandler.ListCommentsByTarget)
 	}
 
 	// Auth required for write operations
-	commentsAuth := router.Group("/comments")
+	commentsAuth := router.Group("/api/comments")
 	commentsAuth.Use(middleware.RequireAuth(jwtService))
 	{
 		commentsAuth.POST("", postHandler.CreateComment)

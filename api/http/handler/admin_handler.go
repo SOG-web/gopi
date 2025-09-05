@@ -30,7 +30,7 @@ func NewAdminHandler(userService *userService.UserService) *AdminHandler {
 // @Failure 401 {object} dto.AuthErrorResponse "Unauthorized - invalid or missing token"
 // @Failure 403 {object} dto.AuthErrorResponse "Forbidden - admin access required"
 // @Failure 500 {object} dto.AuthErrorResponse "Internal server error"
-// @Router /api/admin/stats [get]
+// @Router /admin/stats [get]
 func (h *AdminHandler) GetUserStats(c *gin.Context) {
 	stats, err := h.userService.GetUserStats()
 	if err != nil {
@@ -64,7 +64,7 @@ func (h *AdminHandler) GetUserStats(c *gin.Context) {
 // @Failure 401 {object} dto.AuthErrorResponse "Unauthorized - invalid or missing token"
 // @Failure 403 {object} dto.AuthErrorResponse "Forbidden - admin access required"
 // @Failure 500 {object} dto.AuthErrorResponse "Internal server error"
-// @Router /api/admin/users/search [get]
+// @Router /admin/users/search [get]
 func (h *AdminHandler) SearchUsers(c *gin.Context) {
 	query := c.Query("q")
 	if query == "" {
@@ -117,7 +117,7 @@ func (h *AdminHandler) SearchUsers(c *gin.Context) {
 // @Failure 403 {object} dto.AuthErrorResponse "Forbidden - admin access required"
 // @Failure 404 {object} dto.AuthErrorResponse "User not found"
 // @Failure 500 {object} dto.AuthErrorResponse "Internal server error"
-// @Router /api/admin/users/{id}/activate [post]
+// @Router /admin/users/{id}/activate [post]
 func (h *AdminHandler) ActivateUser(c *gin.Context) {
 	userID := c.Param("id")
 	if userID == "" {
@@ -160,7 +160,7 @@ func (h *AdminHandler) ActivateUser(c *gin.Context) {
 // @Failure 403 {object} dto.AuthErrorResponse "Forbidden - admin access required"
 // @Failure 404 {object} dto.AuthErrorResponse "User not found"
 // @Failure 500 {object} dto.AuthErrorResponse "Internal server error"
-// @Router /api/admin/users/{id}/deactivate [post]
+// @Router /admin/users/{id}/deactivate [post]
 func (h *AdminHandler) DeactivateUser(c *gin.Context) {
 	userID := c.Param("id")
 	if userID == "" {
@@ -203,7 +203,7 @@ func (h *AdminHandler) DeactivateUser(c *gin.Context) {
 // @Failure 403 {object} dto.AuthErrorResponse "Forbidden - admin access required"
 // @Failure 404 {object} dto.AuthErrorResponse "User not found"
 // @Failure 500 {object} dto.AuthErrorResponse "Internal server error"
-// @Router /api/admin/users/{id}/make-staff [post]
+// @Router /admin/users/{id}/make-staff [post]
 func (h *AdminHandler) MakeStaff(c *gin.Context) {
 	userID := c.Param("id")
 	if userID == "" {
@@ -246,7 +246,7 @@ func (h *AdminHandler) MakeStaff(c *gin.Context) {
 // @Failure 403 {object} dto.AuthErrorResponse "Forbidden - admin access required"
 // @Failure 404 {object} dto.AuthErrorResponse "User not found"
 // @Failure 500 {object} dto.AuthErrorResponse "Internal server error"
-// @Router /api/admin/users/{id}/remove-staff [post]
+// @Router /admin/users/{id}/remove-staff [post]
 func (h *AdminHandler) RemoveStaff(c *gin.Context) {
 	userID := c.Param("id")
 	if userID == "" {
@@ -289,7 +289,7 @@ func (h *AdminHandler) RemoveStaff(c *gin.Context) {
 // @Failure 403 {object} dto.AuthErrorResponse "Forbidden - admin access required"
 // @Failure 404 {object} dto.AuthErrorResponse "User not found"
 // @Failure 500 {object} dto.AuthErrorResponse "Internal server error"
-// @Router /api/admin/users/{id}/force-verify [post]
+// @Router /admin/users/{id}/force-verify [post]
 func (h *AdminHandler) ForceVerifyUser(c *gin.Context) {
 	userID := c.Param("id")
 	if userID == "" {
@@ -331,7 +331,7 @@ func (h *AdminHandler) ForceVerifyUser(c *gin.Context) {
 // @Failure 401 {object} dto.AuthErrorResponse "Unauthorized - invalid or missing token"
 // @Failure 403 {object} dto.AuthErrorResponse "Forbidden - admin access required"
 // @Failure 500 {object} dto.AuthErrorResponse "Internal server error"
-// @Router /api/admin/bulk-email [post]
+// @Router /admin/bulk-email [post]
 func (h *AdminHandler) SendBulkEmail(c *gin.Context) {
 	var req dto.BulkEmailRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -373,7 +373,7 @@ func (h *AdminHandler) SendBulkEmail(c *gin.Context) {
 // @Failure 401 {object} dto.AuthErrorResponse "Unauthorized - invalid or missing token"
 // @Failure 403 {object} dto.AuthErrorResponse "Forbidden - admin access required"
 // @Failure 500 {object} dto.AuthErrorResponse "Internal server error"
-// @Router /api/admin/send-apology-emails [post]
+// @Router /admin/send-apology-emails [post]
 func (h *AdminHandler) SendApologyEmails(c *gin.Context) {
 	var req dto.ApologyEmailRequest
 	if err := c.ShouldBindJSON(&req); err != nil {

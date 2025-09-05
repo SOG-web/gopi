@@ -33,7 +33,7 @@ func NewUserHandler(userService *userService.UserService, storage storage.Storag
 // @Failure 401 {object} dto.AuthErrorResponse "Unauthorized - invalid or missing token"
 // @Failure 404 {object} dto.AuthErrorResponse "User not found"
 // @Failure 500 {object} dto.AuthErrorResponse "Internal server error"
-// @Router /api/users/profile [get]
+// @Router /user/profile [get]
 func (h *UserHandler) GetUserProfile(c *gin.Context) {
 	userID := c.GetString("user_id") // From auth middleware
 
@@ -77,7 +77,7 @@ func (h *UserHandler) GetUserProfile(c *gin.Context) {
 // @Failure 401 {object} dto.AuthErrorResponse "Unauthorized - invalid or missing token"
 // @Failure 404 {object} dto.AuthErrorResponse "User not found"
 // @Failure 500 {object} dto.AuthErrorResponse "Internal server error"
-// @Router /api/users/profile [put]
+// @Router /user/profile [put]
 func (h *UserHandler) UpdateUserProfile(c *gin.Context) {
 	userID := c.GetString("user_id") // From auth middleware
 
@@ -168,7 +168,7 @@ func (h *UserHandler) UpdateUserProfile(c *gin.Context) {
 // @Failure 401 {object} dto.AuthErrorResponse "Unauthorized - invalid or missing token"
 // @Failure 403 {object} dto.AuthErrorResponse "Forbidden - admin access required"
 // @Failure 500 {object} dto.AuthErrorResponse "Internal server error"
-// @Router /api/users [get]
+// @Router /user/admin/users [get]
 func (h *UserHandler) GetAllUsers(c *gin.Context) {
 	userID := c.GetString("user_id")
 	if userID == "" {
@@ -233,7 +233,7 @@ func (h *UserHandler) GetAllUsers(c *gin.Context) {
 // @Failure 401 {object} dto.AuthErrorResponse "Unauthorized - invalid or missing token"
 // @Failure 403 {object} dto.AuthErrorResponse "Forbidden - admin access required"
 // @Failure 500 {object} dto.AuthErrorResponse "Internal server error"
-// @Router /api/users/staff [get]
+// @Router /user/admin/staff [get]
 func (h *UserHandler) GetStaffUsers(c *gin.Context) {
 	userID := c.GetString("user_id")
 	if userID == "" {
@@ -290,7 +290,7 @@ func (h *UserHandler) GetStaffUsers(c *gin.Context) {
 // @Failure 401 {object} dto.AuthErrorResponse "Unauthorized - invalid or missing token"
 // @Failure 403 {object} dto.AuthErrorResponse "Forbidden - admin access required"
 // @Failure 500 {object} dto.AuthErrorResponse "Internal server error"
-// @Router /api/users/verified [get]
+// @Router /user/admin/verified [get]
 func (h *UserHandler) GetVerifiedUsers(c *gin.Context) {
 	userID := c.GetString("user_id")
 	if userID == "" {
@@ -347,7 +347,7 @@ func (h *UserHandler) GetVerifiedUsers(c *gin.Context) {
 // @Failure 401 {object} dto.AuthErrorResponse "Unauthorized - invalid or missing token"
 // @Failure 403 {object} dto.AuthErrorResponse "Forbidden - admin access required"
 // @Failure 500 {object} dto.AuthErrorResponse "Internal server error"
-// @Router /api/users/unverified [get]
+// @Router /user/admin/unverified [get]
 func (h *UserHandler) GetUnverifiedUsers(c *gin.Context) {
 	userID := c.GetString("user_id")
 	if userID == "" {
@@ -407,7 +407,7 @@ func (h *UserHandler) GetUnverifiedUsers(c *gin.Context) {
 // @Failure 403 {object} dto.AuthErrorResponse "Forbidden - admin access required"
 // @Failure 404 {object} dto.AuthErrorResponse "User not found"
 // @Failure 500 {object} dto.AuthErrorResponse "Internal server error"
-// @Router /api/users/{id} [get]
+// @Router /user/admin/{id} [get]
 func (h *UserHandler) GetUserByID(c *gin.Context) {
 	userID := c.GetString("user_id")
 	if userID == "" {

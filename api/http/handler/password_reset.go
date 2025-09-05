@@ -31,7 +31,6 @@ func NewPasswordResetHandler(userSvc *userService.UserService, pwSvc pwreset.Pas
 }
 
 // RequestPasswordReset handles generating a reset token and emailing a link.
-// POST /api/auth/password-reset/request/
 // @Summary Request Password Reset
 // @Description Generate a password reset token and send reset link to email. Always returns 200 to prevent user enumeration.
 // @Tags Authentication
@@ -40,7 +39,7 @@ func NewPasswordResetHandler(userSvc *userService.UserService, pwSvc pwreset.Pas
 // @Param request body dto.PasswordResetRequest true "Email address to reset"
 // @Success 200 {object} dto.PasswordResetResponse "If that email exists, a reset link has been sent."
 // @Failure 400 {object} dto.PasswordResetResponse "Invalid request payload"
-// @Router /api/auth/password-reset/request [post]
+// @Router /auth/password-reset/request [post]
 func (h *PasswordResetHandler) RequestPasswordReset(c *gin.Context) {
 	var req dto.PasswordResetRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -88,7 +87,6 @@ func (h *PasswordResetHandler) RequestPasswordReset(c *gin.Context) {
 }
 
 // ConfirmPasswordReset handles verifying token and setting a new password.
-// POST /api/auth/password-reset/confirm/
 // @Summary Confirm Password Reset
 // @Description Validate a password reset token and set a new password. Token is single-use and expires after TTL.
 // @Tags Authentication
@@ -97,7 +95,7 @@ func (h *PasswordResetHandler) RequestPasswordReset(c *gin.Context) {
 // @Param request body dto.PasswordResetConfirmRequest true "Token and new password"
 // @Success 200 {object} dto.PasswordResetConfirmResponse "Password has been reset successfully"
 // @Failure 400 {object} dto.PasswordResetConfirmResponse "Invalid or expired token, or invalid payload"
-// @Router /api/auth/password-reset/confirm [post]
+// @Router /auth/password-reset/confirm [post]
 func (h *PasswordResetHandler) ConfirmPasswordReset(c *gin.Context) {
 	var req dto.PasswordResetConfirmRequest
 	if err := c.ShouldBindJSON(&req); err != nil {

@@ -143,7 +143,7 @@ func (h *ChallengeHandler) GetChallenges(c *gin.Context) {
 // @Success 200 {object} dto.ChallengeResponse "Challenge retrieved successfully"
 // @Failure 404 {object} dto.ErrorResponse "Challenge not found"
 // @Failure 500 {object} dto.ErrorResponse "Internal server error"
-// @Router /challenges/{id} [get]
+// @Router /challenges/id/{id} [get]
 func (h *ChallengeHandler) GetChallengeByID(c *gin.Context) {
 	id := c.Param("id")
 

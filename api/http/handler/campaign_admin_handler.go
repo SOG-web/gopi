@@ -41,7 +41,7 @@ func NewCampaignAdminHandler(campaignService *campaign.CampaignService, userServ
 // @Failure 401 {object} dto.ErrorResponse "Unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "Campaign or user not found"
 // @Failure 500 {object} dto.ErrorResponse "Internal server error"
-// @Router /admin/campaign-runners [post]
+// @Router /campaigns/admin/campaign-runners [post]
 func (h *CampaignAdminHandler) CreateCampaignRunner(c *gin.Context) {
 	var req dto.CreateCampaignRunnerRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -98,7 +98,7 @@ func (h *CampaignAdminHandler) CreateCampaignRunner(c *gin.Context) {
 // @Failure 400 {object} dto.ErrorResponse "Invalid query parameters"
 // @Failure 401 {object} dto.ErrorResponse "Unauthorized"
 // @Failure 500 {object} dto.ErrorResponse "Internal server error"
-// @Router /admin/campaign-runners [get]
+// @Router /campaigns/admin/campaign-runners [get]
 func (h *CampaignAdminHandler) GetCampaignRunners(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
@@ -182,7 +182,7 @@ func (h *CampaignAdminHandler) GetCampaignRunners(c *gin.Context) {
 // @Success 200 {object} dto.CampaignRunnerResponse "Campaign runner retrieved successfully"
 // @Failure 404 {object} dto.ErrorResponse "Campaign runner not found"
 // @Failure 500 {object} dto.ErrorResponse "Internal server error"
-// @Router /admin/campaign-runners/{id} [get]
+// @Router /campaigns/admin/campaign-runners/{id} [get]
 func (h *CampaignAdminHandler) GetCampaignRunnerByID(c *gin.Context) {
 	id := c.Param("id")
 
@@ -218,7 +218,7 @@ func (h *CampaignAdminHandler) GetCampaignRunnerByID(c *gin.Context) {
 // @Failure 401 {object} dto.ErrorResponse "Unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "Campaign runner not found"
 // @Failure 500 {object} dto.ErrorResponse "Internal server error"
-// @Router /admin/campaign-runners/{id} [put]
+// @Router /campaigns/admin/campaign-runners/{id} [put]
 func (h *CampaignAdminHandler) UpdateCampaignRunner(c *gin.Context) {
 	id := c.Param("id")
 
@@ -276,7 +276,7 @@ func (h *CampaignAdminHandler) UpdateCampaignRunner(c *gin.Context) {
 // @Failure 401 {object} dto.ErrorResponse "Unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "Campaign runner not found"
 // @Failure 500 {object} dto.ErrorResponse "Internal server error"
-// @Router /admin/campaign-runners/{id} [delete]
+// @Router /campaigns/admin/campaign-runners/{id} [delete]
 func (h *CampaignAdminHandler) DeleteCampaignRunner(c *gin.Context) {
 	id := c.Param("id")
 
@@ -312,7 +312,7 @@ func (h *CampaignAdminHandler) DeleteCampaignRunner(c *gin.Context) {
 // @Failure 401 {object} dto.ErrorResponse "Unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "Campaign not found"
 // @Failure 500 {object} dto.ErrorResponse "Internal server error"
-// @Router /admin/sponsor-campaigns [post]
+// @Router /campaigns/admin/sponsor-campaigns [post]
 func (h *CampaignAdminHandler) CreateSponsorCampaign(c *gin.Context) {
 	var req dto.CreateSponsorCampaignRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -386,7 +386,7 @@ func (h *CampaignAdminHandler) CreateSponsorCampaign(c *gin.Context) {
 // @Failure 400 {object} dto.ErrorResponse "Invalid query parameters"
 // @Failure 401 {object} dto.ErrorResponse "Unauthorized"
 // @Failure 500 {object} dto.ErrorResponse "Internal server error"
-// @Router /admin/sponsor-campaigns [get]
+// @Router /campaigns/admin/sponsor-campaigns [get]
 func (h *CampaignAdminHandler) GetSponsorCampaigns(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
@@ -451,7 +451,7 @@ func (h *CampaignAdminHandler) GetSponsorCampaigns(c *gin.Context) {
 // @Success 200 {object} dto.SponsorCampaignResponse "Sponsor campaign retrieved successfully"
 // @Failure 404 {object} dto.ErrorResponse "Sponsor campaign not found"
 // @Failure 500 {object} dto.ErrorResponse "Internal server error"
-// @Router /admin/sponsor-campaigns/{id} [get]
+// @Router /campaigns/admin/sponsor-campaigns/{id} [get]
 func (h *CampaignAdminHandler) GetSponsorCampaignByID(c *gin.Context) {
 	id := c.Param("id")
 
@@ -499,7 +499,7 @@ func (h *CampaignAdminHandler) GetSponsorCampaignByID(c *gin.Context) {
 // @Failure 401 {object} dto.ErrorResponse "Unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "Sponsor campaign not found"
 // @Failure 500 {object} dto.ErrorResponse "Internal server error"
-// @Router /admin/sponsor-campaigns/{id} [put]
+// @Router /campaigns/admin/sponsor-campaigns/{id} [put]
 func (h *CampaignAdminHandler) UpdateSponsorCampaign(c *gin.Context) {
 	id := c.Param("id")
 
@@ -556,7 +556,7 @@ func (h *CampaignAdminHandler) UpdateSponsorCampaign(c *gin.Context) {
 // @Failure 401 {object} dto.ErrorResponse "Unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "Sponsor campaign not found"
 // @Failure 500 {object} dto.ErrorResponse "Internal server error"
-// @Router /admin/sponsor-campaigns/{id} [delete]
+// @Router /campaigns/admin/sponsor-campaigns/{id} [delete]
 func (h *CampaignAdminHandler) DeleteSponsorCampaign(c *gin.Context) {
 	id := c.Param("id")
 

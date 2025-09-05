@@ -14,14 +14,14 @@ func RegisterCampaignRoutes(router *gin.Engine, campaignService *campaign.Campai
 	campaignAdminHandler := handler.NewCampaignAdminHandler(campaignService, userService)
 
 	// Public campaign routes
-	campaigns := router.Group("/campaigns")
+	campaigns := router.Group("/api/campaigns")
 	{
 		campaigns.GET("", campaignHandler.GetCampaigns)            // tested
 		campaigns.GET("/:slug", campaignHandler.GetCampaignBySlug) // tested
 	}
 
 	// Protected campaign routes (require authentication)
-	protectedCampaigns := router.Group("/campaigns")
+	protectedCampaigns := router.Group("/api/campaigns")
 	protectedCampaigns.Use(middleware.RequireAuth(jwtService))
 	{
 		protectedCampaigns.POST("", campaignHandler.CreateCampaign)         // tested
@@ -46,7 +46,7 @@ func RegisterCampaignRoutes(router *gin.Engine, campaignService *campaign.Campai
 	}
 
 	// Admin routes for campaign management
-	adminCampaigns := router.Group("/admin")
+	adminCampaigns := router.Group("/api/campaigns/admin")
 	adminCampaigns.Use(middleware.RequireAuth(jwtService))
 	adminCampaigns.Use(middleware.RequireStaff()) // Require staff privileges for admin routes
 	{

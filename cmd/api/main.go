@@ -59,15 +59,20 @@ func main() {
 	slog.SetDefault(lg)
 
 	// Configure swagger metadata at runtime
-	docs.SwaggerInfo.BasePath = "/v1"
+	docs.SwaggerInfo.BasePath = "/api"
 
 	slog.Info("creating db", "cfg", cfg)
 	var gdb *gorm.DB
 	var err error
 	if cfg.DBDriver == "sqlite" {
 		gdb, err = db.NewSqliteDb(cfg)
-	} else {
+	} else if cfg.DBDriver == "mysql" {
 		gdb, err = db.NewMysqlDb(cfg)
+	} else if cfg.DBDriver == "postgres" {
+		gdb, err = db.NewPostgresDb(cfg)
+	} else {
+		slog.Error("unsupported db driver", "driver", cfg.DBDriver)
+		panic("unsupported db driver")
 	}
 	if err != nil {
 		slog.Error("db error", "err", err)

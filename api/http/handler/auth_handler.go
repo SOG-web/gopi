@@ -33,7 +33,7 @@ func NewAuthHandler(userService *userService.UserService, jwtService jwt.JWTServ
 // @Failure 400 {object} dto.RegistrationResponse "Invalid input or validation error"
 // @Failure 409 {object} dto.RegistrationResponse "User already exists"
 // @Failure 500 {object} dto.RegistrationResponse "Internal server error"
-// @Router /api/auth/register [post]
+// @Router /auth/register [post]
 func (h *AuthHandler) UserRegister(c *gin.Context) {
 	var req dto.RegistrationRequest
 
@@ -132,7 +132,7 @@ func (h *AuthHandler) UserRegister(c *gin.Context) {
 // @Failure 401 {object} dto.LoginResponse "Invalid credentials"
 // @Failure 403 {object} dto.LoginResponse "Account not verified or inactive"
 // @Failure 500 {object} dto.LoginResponse "Internal server error"
-// @Router /api/auth/login [post]
+// @Router /auth/login [post]
 func (h *AuthHandler) UserLogin(c *gin.Context) {
 	var req dto.LoginRequest
 
@@ -197,7 +197,7 @@ func (h *AuthHandler) UserLogin(c *gin.Context) {
 // @Success 200 {object} dto.LogoutResponse "Logout successful"
 // @Failure 401 {object} dto.ErrorResponse "Unauthorized - invalid or missing token"
 // @Failure 500 {object} dto.ErrorResponse "Internal server error"
-// @Router /api/auth/logout [post]
+// @Router /auth/logout [post]
 func (h *AuthHandler) UserLogout(c *gin.Context) {
 	// The JWT middleware should have already validated the token and set user context
 	userID := c.GetString("user_id")
@@ -245,7 +245,7 @@ func (h *AuthHandler) UserLogout(c *gin.Context) {
 // @Failure 401 {object} dto.VerifyOTPResponse "Invalid or expired OTP"
 // @Failure 404 {object} dto.VerifyOTPResponse "User not found"
 // @Failure 500 {object} dto.VerifyOTPResponse "Internal server error"
-// @Router /api/auth/verify-otp [post]
+// @Router /auth/verify-otp [post]
 func (h *AuthHandler) VerifyOTP(c *gin.Context) {
 	var req dto.VerifyOTPRequest
 
@@ -298,7 +298,7 @@ func (h *AuthHandler) VerifyOTP(c *gin.Context) {
 // @Failure 401 {object} dto.AuthErrorResponse "Unauthorized - invalid or missing token"
 // @Failure 404 {object} dto.AuthErrorResponse "User not found"
 // @Failure 500 {object} dto.AuthErrorResponse "Internal server error"
-// @Router /api/auth/delete-account [delete]
+// @Router /auth/delete-account [delete]
 func (h *AuthHandler) DeleteAccount(c *gin.Context) {
 	// Here you would get the user ID from the authenticated context
 	userID := c.GetString("user_id") // This would come from auth middleware
@@ -339,7 +339,7 @@ func (h *AuthHandler) DeleteAccount(c *gin.Context) {
 // @Failure 404 {object} dto.AuthErrorResponse "User not found"
 // @Failure 429 {object} dto.AuthErrorResponse "Too many requests - rate limited"
 // @Failure 500 {object} dto.AuthErrorResponse "Internal server error"
-// @Router /api/auth/resend-otp/{id} [post]
+// @Router /auth/resend-otp/{id} [post]
 func (h *AuthHandler) ResendOTP(c *gin.Context) {
 	userIDParam := c.Param("id")
 	if userIDParam == "" {
@@ -393,7 +393,7 @@ func (h *AuthHandler) ResendOTP(c *gin.Context) {
 // @Failure 401 {object} dto.ChangePasswordResponse "Unauthorized or invalid current password"
 // @Failure 404 {object} dto.ChangePasswordResponse "User not found"
 // @Failure 500 {object} dto.ChangePasswordResponse "Internal server error"
-// @Router /api/auth/change-password [post]
+// @Router /auth/change-password [post]
 func (h *AuthHandler) ChangePassword(c *gin.Context) {
 	var req dto.ChangePasswordRequest
 

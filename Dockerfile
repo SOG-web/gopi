@@ -16,8 +16,11 @@ RUN go mod download
 # Copy source code
 COPY . .
 
+# Generate Swagger docs
+RUN go install github.com/swaggo/swag/cmd/swag@latest && swag init -g cmd/api/main.go -o ./docs
+
 # Build the application
-RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -o main ./cmd/api
+RUN go build -a -installsuffix cgo -o main ./cmd/api
 
 # Final stage
 FROM alpine:latest
@@ -33,6 +36,9 @@ WORKDIR /app
 
 # Copy the binary from builder stage
 COPY --from=builder /app/main .
+
+# Copy the docs directory for Swagger
+COPY --from=builder /app/docs ./docs
 
 # Create directories for logs and uploads
 RUN mkdir -p /app/logs /app/uploads && \

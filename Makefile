@@ -287,21 +287,21 @@ docker-logs:
 # Start all services with Docker Compose
 docker-compose-up:
 	@echo "Starting all services with Docker Compose..."
-	docker-compose up -d
+	docker compose up -d
 
 # Stop all services with Docker Compose
 docker-compose-down:
 	@echo "Stopping all services with Docker Compose..."
-	docker-compose down
+	docker compose down
 
 # Build all services with Docker Compose
 docker-compose-build:
 	@echo "Building all services with Docker Compose..."
-	docker-compose build
+	docker compose build
 
 # Show Docker Compose logs
 docker-compose-logs:
-	docker-compose logs -f
+	docker compose logs -f
 
 # Clean Docker artifacts
 docker-clean:

@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   # GoPadi Backend Application
@@ -10,25 +10,26 @@ services:
       - "8080:8080"
     environment:
       # Server Configuration
-      PUBLIC_HOST: http://localhost
-      PORT: 8080
+      PUBLIC_HOST: ${PUBLIC_HOST:-localhost}
+      PORT: ${PORT:-8080}
 
       # Database Configuration (PostgreSQL)
-      DB_DRIVER: postgres
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_USER: gopi_user
-      DB_PASSWORD: gopi_password
-      DB_NAME: gopi_db
+      DB_DRIVER: ${DB_DRIVER:-postgres}
+      DB_ADDRESS: ${DB_ADDRESS:-postgresql://gopi_user:gopi_password@db:5432/gopi_db}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USER: ${DB_USER:-gopi_user}
+      DB_PASSWORD: ${DB_PASSWORD:-gopi_password}
+      DB_NAME: ${DB_NAME:-gopi_db}
+      DB_HOST: ${DB_HOST:-db}
 
       # Redis Configuration
-      REDIS_ADDR: redis:6379
-      REDIS_PASSWORD: ""
-      REDIS_DB: 0
+      REDIS_ADDR: ${REDIS_ADDR:-redis:6379}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      REDIS_DB: ${REDIS_DB:-0}
 
       # JWT Configuration
-      JWT_SECRET: your-super-secret-jwt-key-change-in-production
-      USE_DATABASE_JWT: false
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
+      USE_DATABASE_JWT: ${USE_DATABASE_JWT:-true}
 
       # Email Configuration (Local for development)
       USE_LOCAL_EMAIL: true
@@ -40,7 +41,7 @@ services:
       EMAIL_FROM: noreply@gopadi.com
 
       # Password Reset Configuration
-      USE_DATABASE_PWRESET: false
+      USE_DATABASE_PWRESET: ${USE_DATABASE_PWRESET:-true}
 
       # Logging Configuration
       LOG_LEVEL: info
@@ -88,8 +89,8 @@ services:
       POSTGRES_DB: gopi_db
       POSTGRES_USER: gopi_user
       POSTGRES_PASSWORD: gopi_password
-    ports:
-      - "5432:5432"
+    # ports:
+    #   - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
@@ -105,8 +106,8 @@ services:
   # Redis Cache
   redis:
     image: redis:7-alpine
-    ports:
-      - "6379:6379"
+    # ports:
+    #   - "6379:6379"
     volumes:
       - redis_data:/data
     networks:

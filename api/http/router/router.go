@@ -47,7 +47,7 @@ func New(deps Dependencies) *gin.Engine {
 
 	// CORS configuration
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowOrigins:     []string{"http://localhost:3000", "http://localhost:8080"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Content-Type", "Authorization"},
 		AllowCredentials: true,
@@ -61,9 +61,9 @@ func New(deps Dependencies) *gin.Engine {
 	}
 
 	// Swagger documentation
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, ginSwagger.URL("/doc.json")))
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.GET("/doc.json", func(c *gin.Context) {
-		c.File("docs/swagger.json")
+		c.File("./docs/swagger.json")
 	})
 
 	// Serve static uploads (profile images, etc.)

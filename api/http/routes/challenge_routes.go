@@ -12,7 +12,7 @@ import (
 func RegisterChallengeRoutes(router *gin.Engine, challengeService *challenge.ChallengeService, userService *user.UserService, jwtService jwt.JWTServiceInterface) {
 	challengeHandler := handler.NewChallengeHandler(challengeService, userService)
 
-	api := router.Group("/api/v1")
+	api := router.Group("/api")
 
 	// Challenge routes
 	challenges := api.Group("/challenges")

@@ -1183,12 +1183,14 @@ definitions:
       first_name:
         type: string
       height:
+        minimum: 0
         type: number
       last_name:
         type: string
       username:
         type: string
       weight:
+        minimum: 0
         type: number
     type: object
   dto.UserData:

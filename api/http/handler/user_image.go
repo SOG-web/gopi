@@ -23,7 +23,7 @@ import (
 // @Failure 400 {object} dto.AuthErrorResponse "Invalid request or file"
 // @Failure 401 {object} dto.AuthErrorResponse "Unauthorized"
 // @Failure 500 {object} dto.AuthErrorResponse "Internal server error"
-// @Router /api/user/profile/image [post]
+// @Router /user/profile/image [post]
 func (h *UserHandler) UploadProfileImage(c *gin.Context) {
     userID := c.GetString("user_id")
     if userID == "" {

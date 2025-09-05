@@ -21,7 +21,7 @@ func RegisterChatRoutes(router *gin.Engine, chatService *chat.ChatService, userS
 	go wsManager.Run()
 
 	// Protected chat routes (require authentication)
-	protectedChat := router.Group("/chat")
+	protectedChat := router.Group("/api/chat")
 	protectedChat.Use(middleware.RequireAuth(jwtService))
 	{
 		// Group management routes
@@ -41,7 +41,7 @@ func RegisterChatRoutes(router *gin.Engine, chatService *chat.ChatService, userS
 	}
 
 	// Admin-only chat routes
-	adminChat := router.Group("/chat/admin")
+	adminChat := router.Group("/api/chat/admin")
 	adminChat.Use(middleware.RequireAuth(jwtService))
 	adminChat.Use(middleware.RequireStaff())
 	{
